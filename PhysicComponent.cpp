@@ -1,11 +1,10 @@
 #include "PhysicComponent.h"
 
 PhysicComponent::PhysicComponent(
-	b2World* world,sf::Sprite& sprite,std::string userData
+	b2World* world,sf::Sprite& sprite
 )
 	:sprite(sprite),
-	world(world),
-	userData(static_cast<void*>(&userData))
+	world(world)
 {
 
 	
@@ -52,7 +51,7 @@ PhysicComponent::PhysicComponent(
 	bfix->SetUserData((void*)"shield");
 	//SHIELDS
 
-	this->body->SetUserData(this->userData);
+	this->body->SetUserData((void*)"player");
 }
 
 PhysicComponent::~PhysicComponent()
@@ -83,7 +82,7 @@ b2Body* PhysicComponent::getBody()
 bool PhysicComponent::onGround()
 {
 	b2Vec2 pos = body->GetPosition();
-	pos.y += (163/2-3) / SCALE;
+	pos.y += (163 / 2 - 3) / SCALE;
 	for (b2Body* it = world->GetBodyList(); it != 0; it = it->GetNext())
 		if (it->GetUserData() == (void*)"platform" || it->GetUserData() == (void*)"box" || it->GetUserData() == (void*)"wall")
 		{

@@ -168,38 +168,15 @@ void MovementComponent::updateBody(const float& dt, b2Body* body, bool onGround)
 	}
 
 
-	/*b2Vec2 vel = body->GetLinearVelocity();
-	//vel.x = this->velocity.x/SCALE;
-	//body->SetLinearVelocity(vel);
-	float velChange = this->velocity.x/SCALE -vel.x;
-	float force = velChange / (1 / 60.0); //f = mv/t
-	body->ApplyForce(b2Vec2(force, 0), body->GetWorldCenter(),true);
-
-	if (this->getState(MOVING_UP) && onGround)
-	{
-		body->SetLinearVelocity(b2Vec2(vel.x, -10));
-	}*/
-
 	b2Vec2 vel = body->GetLinearVelocity();
-	float  angVel = body->GetAngularVelocity();
-	float velChange = this->velocity.x / SCALE - vel.x;
-	float force = body->GetMass()*velChange / (1 / 60.0);
-	if (this->getState(MOVING_RIGHT)) 
-		if (vel.x < maxVelocity/SCALE) 
-		{ 
-			body->ApplyForce(b2Vec2(force, 0), body->GetWorldCenter(), true);
-		}
-	if (this->getState(MOVING_LEFT) ) 
-		if (vel.x > -maxVelocity / SCALE) 
-		{
-			body->ApplyForce(b2Vec2(force, 0), body->GetWorldCenter(), true);
-		}
-	if (this->getState(MOVING_UP))  
-		if (onGround) 
-			body->SetLinearVelocity(b2Vec2(vel.x, -10));
+	if (!this->getState(IDLE))
+	{
+		vel.x = (this->velocity.x / SCALE)*60*dt;
+		//vel.y = (this->velocity.y / SCALE)*60*dt;
+		body->SetLinearVelocity(vel);
+	}
+	if (this->getState(MOVING_UP))
+		if (onGround)
+			body->SetLinearVelocity(b2Vec2(vel.x, -12));
 
-	
-
-	//Final move
-	//this->sprite.move(this->velocity * dt); //Uses velocity
 }

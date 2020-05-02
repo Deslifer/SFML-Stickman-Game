@@ -6,7 +6,7 @@
 #include "MyContactListener.h"
 
 enum pixel_States { PIX_KINETIC = 0, PIX_DYNAMIC};
-enum pixel_Types { PIX_POINT = 0, PIX_ROPE, PIX_SWORD, PIX_SHIELD};
+enum pixel_Types { PIX_POINT = 0, PIX_ROPE, PIX_BODY, PIX_SWORD, PIX_SHIELD};
 
 class EditorState :
 	public State, public b2ContactListener
@@ -19,6 +19,8 @@ private:
 
 	sf::Texture backgroundTexture;
 	sf::RectangleShape background;
+	sf::Texture backgroundTexture2;
+	sf::RectangleShape background2;
 
 	sf::Texture backgroundTexture1;
 	sf::RectangleShape background1;
@@ -31,27 +33,28 @@ private:
 
 	const float SCALE = 30.f;
 	const float DEG = 57.29577f;
+
 	std::unique_ptr<b2World> world;
 
 	std::vector<b2Body*> boxes;
 	std::vector<sf::Color> boxesColors;
 
-	std::vector<b2Body*> bodyboxes;
-
 	std::vector<b2Body*> platforms;
 	std::vector<sf::Color> platformsColors;
 
 	b2Fixture* m_platformFixture;
-
-
-	int pixState = 0;
-	int pixType = 0;
-	bool popfront = 1;
-	bool isWay = 0;
+	float time;
+	float platformSpeed;
+	int firstpoint;
+	int SCORE;
+	int nextSCORE;
+	int pixState;
+	int pixType;
+	
+	bool popfront;
+	bool isWay;
 
 	//Functions
-	
-
 	void setWall(int x, int y, int w, int h);
 	void setPlatform(float x, float y);
 	void setPixel(float x, float y);
@@ -67,6 +70,7 @@ private:
 	void updatePlatforms();
 	void renderPlatforms(sf::RenderTarget* target);
 	void renderText(std::string s, float x, float y, unsigned int size, sf::RenderTarget* target);
+	void renderNumbers(float s, float x, float y, unsigned int size, sf::RenderTarget* target);
 
 public:
 	EditorState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states);

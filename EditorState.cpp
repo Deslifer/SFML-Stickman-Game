@@ -36,15 +36,14 @@ void EditorState::setPlatform(float x, float y)
 	f.maskBits = MASK_PLATFORM;
 	//Filter
 	bdef.type = b2_kinematicBody;
-	
-	shape.SetAsBox(75.f / SCALE, 1.f / SCALE);
+	shape.SetAsBox(75.f / SCALE, 8.f / SCALE);
 	bdef.position.Set(x / SCALE, y / SCALE);
 	body = this->world->CreateBody(&bdef);
-	this->m_platformFixture = body->CreateFixture(&shape, 1);
+	this->m_platformFixture = body->CreateFixture(&shape, 5);
 	this->m_platformFixture->SetFilterData(f);
 	this->m_platformFixture->SetUserData((void*)"platform");
 	body->SetUserData((void*)"platform");
-	//body->SetLinearVelocity(b2Vec2(-distributionSpeed(generator), 0));
+	body->SetLinearVelocity(b2Vec2(-this->platformSpeed, 0));
 	this->platforms.push_back(body);
 	color = sf::Color(distribution(generator), distribution(generator), distribution(generator));
 	this->platformsColors.push_back(color);
@@ -60,18 +59,19 @@ void EditorState::setPixel(float x, float y)
 	b2FixtureDef fdef;
 	b2Fixture* bfix;
 	b2Filter f2;
+	if (pixType != PIX_BODY || pixState == PIX_KINETIC)
+		firstpoint++;
 
-	if (pixState == PIX_DYNAMIC)
+	if (pixState == PIX_DYNAMIC && pixType != PIX_BODY)
 	{
 		bdef.type = b2_dynamicBody;
 	}
-	else if (pixState == PIX_KINETIC)
+	else if (pixState == PIX_KINETIC || pixType == PIX_BODY)
 	{
 		bdef.type = b2_staticBody;
 	}
-	
 
-	if ((pixType == PIX_SHIELD || pixType == PIX_SWORD) && pixState== PIX_DYNAMIC)
+	if ((pixType == PIX_SHIELD || pixType == PIX_SWORD) && pixState == PIX_DYNAMIC)
 	{
 		f2.categoryBits = CATEGORY_BODY;
 		f2.maskBits = MASK_BODY_SHIELD;
@@ -86,7 +86,7 @@ void EditorState::setPixel(float x, float y)
 
 	bdef.position.Set(x / SCALE, y / SCALE);
 	circle.m_radius = 5 / SCALE;
-	polyg.SetAsBox(5 / SCALE, 5/SCALE);
+	polyg.SetAsBox(5 / SCALE, 5 / SCALE);
 	body = this->world->CreateBody(&bdef);
 	if ((pixType == PIX_SHIELD || pixType == PIX_SWORD) && pixState == PIX_DYNAMIC)
 	{
@@ -112,72 +112,113 @@ void EditorState::setPixel(float x, float y)
 	body->SetUserData((void*)"box");
 
 	this->boxes.push_back(body);
-	sf::Color color = sf::Color(distribution(generator), distribution(generator), distribution(generator));
+	sf::Color color;
+	if (pixType == PIX_POINT)
+		color = sf::Color::Cyan;
+	else if (pixType == PIX_ROPE)
+		color = sf::Color::Magenta;
+	else if (pixType == PIX_BODY)
+		color = sf::Color::Blue;
+	else if (pixType == PIX_SWORD)
+		color = sf::Color::Red;
+	else if (pixType == PIX_SHIELD)
+		color = sf::Color::Green;
+	color =sf::Color(distribution(generator), distribution(generator), distribution(generator));
 	this->boxesColors.push_back(color);
 
-		if (this->boxes.size() > 1 && pixType == PIX_ROPE) {
-			b2RopeJointDef rDef;
-			rDef.bodyA = this->boxes[this->boxes.size() - 1];
-			rDef.bodyB = this->boxes[this->boxes.size() - 2];
-			rDef.collideConnected = true;
-			rDef.maxLength = 5 / SCALE;
-			rDef.localAnchorA.Set(0, -1.f / SCALE);
-			rDef.localAnchorB.Set(0, 1.f / SCALE);
-			this->world->CreateJoint(&rDef);
-
-			/*b2WeldJointDef rDef;
-			rDef.bodyA = this->boxes[this->boxes.size() - 1];
-			rDef.bodyB = this->boxes[this->boxes.size() - 2];
-			rDef.collideConnected = true;
-			rDef.localAnchorA.Set(0, 5 / SCALE);
-			rDef.localAnchorB.Set(0, -5 / SCALE);
-			this->world->CreateJoint(&rDef);*/
-		}
-		else if (pixType == PIX_SHIELD && pixState==PIX_DYNAMIC)
-		{
-			b2MotorJointDef rDef;
-			rDef.bodyA = this->boxes[this->boxes.size() - 1];
-			rDef.bodyB = this->player->getBody();
-			rDef.collideConnected = true;
-			rDef.maxForce = 1;
-			this->world->CreateJoint(&rDef);
-		}
-		else if (pixType == PIX_SWORD && pixState == PIX_DYNAMIC)
-		{
-			b2MotorJointDef rDef;
-			rDef.bodyA = this->boxes[this->boxes.size() - 1];
-			rDef.bodyB = this->player->getBody();
-			rDef.collideConnected = true;
-			rDef.maxForce = -1;
-			this->world->CreateJoint(&rDef);
-		}
+	if (pixType == PIX_ROPE && this->boxes.size() > 1 ) {
+		b2RopeJointDef rDef;
+		rDef.bodyA = this->boxes[this->boxes.size() - 1];
+		rDef.bodyB = this->boxes[this->boxes.size() - 2];
+		rDef.collideConnected = true;
+		rDef.maxLength = 5 / SCALE;
+		rDef.localAnchorA.Set(0, -1/SCALE);
+		rDef.localAnchorB.Set(0, 1 / SCALE);
+		this->world->CreateJoint(&rDef);
+	}
+	else if (pixType == PIX_BODY && pixState == PIX_DYNAMIC && this->boxes.size() > firstpoint+1 )
+	{
+		b2WeldJointDef rDef;
+		rDef.bodyA = this->boxes[this->boxes.size() - 1];
+		rDef.bodyB = this->boxes[this->boxes.size() - 2];
+		//rDef.Initialize(this->boxes[this->boxes.size() - 1], this->boxes[this->boxes.size() - 2], this->boxes[this->boxes.size() - 1]->GetWorldCenter());
+		rDef.bodyA->SetFixedRotation(true);
+		rDef.bodyB->SetFixedRotation(true);
+		float dx, dy;
+		dx = rDef.bodyA->GetPosition().x - rDef.bodyB->GetPosition().x;
+		dy = rDef.bodyA->GetPosition().y - rDef.bodyB->GetPosition().y;
+		rDef.collideConnected = true;
+		rDef.localAnchorA.Set(0, 0);
+		rDef.localAnchorB.Set(dx / 1.2, dy / 1.2);
+		this->world->CreateJoint(&rDef);
+		this->world->CreateJoint(&rDef);
+	}
+	else if (pixType == PIX_SHIELD && pixState == PIX_DYNAMIC)
+	{
+		b2MotorJointDef rDef;
+		rDef.bodyA = this->boxes[this->boxes.size() - 1];
+		rDef.bodyB = this->player->getBody();
+		rDef.collideConnected = true;
+		rDef.maxForce = 1;
+		this->world->CreateJoint(&rDef);
+	}
+	else if (pixType == PIX_SWORD && pixState == PIX_DYNAMIC)
+	{
+		b2MotorJointDef rDef;
+		rDef.bodyA = this->boxes[this->boxes.size() - 1];
+		rDef.bodyB = this->player->getBody();
+		rDef.collideConnected = true;
+		rDef.maxForce = -1;
+		this->world->CreateJoint(&rDef);
+	}
 }
 
 void EditorState::deletePixels()
 {
+	std::cout << popfront << std::endl;
 	if (this->boxes.size() > 0 && this->boxesColors.size() > 0)
 	{
 		if (this->popfront)
 		{
-			this->world->DestroyBody(this->boxes[0]);
-			this->boxes[0]->SetUserData(NULL);
-			this->boxes[0] = NULL;
+			/*for (b2JointEdge* f = this->boxes.front()->GetJointList(); f != 0; f = f->next) {
+				this->world->DestroyJoint(f->joint);
+			}*/
+			this->world->DestroyBody(this->boxes.front());
+			this->boxes.front()->SetUserData(NULL);
+			this->boxes.front() = NULL;
 			this->boxes.erase(this->boxes.begin());
 			this->boxesColors.erase(this->boxesColors.begin());
+			if (firstpoint!=0)
+				firstpoint--;
 		}
 		else
 		{
-			this->world->DestroyBody(this->boxes[boxes.size() - 1]);
-			this->boxes[boxes.size() - 1]->SetUserData(NULL);
-			this->boxes[boxes.size() - 1] = NULL;
+			/*for (b2JointEdge * f = this->boxes.back()->GetJointList(); f != 0; f = f->next) {
+				this->world->DestroyJoint(f->joint);
+			}*/
+			this->world->DestroyBody(this->boxes.back());
+			this->boxes.back()->SetUserData(NULL);
+			this->boxes.back() = NULL;
 			this->boxes.pop_back();
 			this->boxesColors.pop_back();
+			if (firstpoint != 0 && firstpoint!=this->boxes.size())
+				firstpoint= this->boxes.size();
+			
 		}
 	}
 }
 
 void EditorState::initVariables()
 {
+	this->firstpoint = 0;
+	this->SCORE = 0;
+	this->nextSCORE = 3;
+	this->pixState = 0;
+	this->pixType = 0;
+	this->platformSpeed = 1;
+	this->popfront = 1;
+	this->isWay = 0;
+	this->time = 0;
 }
 
 void EditorState::initBackground()
@@ -189,15 +230,27 @@ void EditorState::initBackground()
 			static_cast<float>(this->window->getSize().y)
 		)
 	);
+	this->background2.setSize(
+		sf::Vector2f
+		(
+			static_cast<float>(this->window->getSize().x),
+			static_cast<float>(this->window->getSize().y)
+		)
+	);
 	if (!this->backgroundTexture.loadFromFile("Sprites/BG.jpg"))
 	{
 		throw "ERROR::MAIN_MENU_STATE::FAILED_TO_LOAD_BACKGROUND_TEXTURE";
 	}
+	if (!this->backgroundTexture2.loadFromFile("Sprites/BGR.jpg"))
+	{
+		throw "ERROR::MAIN_MENU_STATE::FAILED_TO_LOAD_BACKGROUND_TEXTURE";
+	}
 	//this->background.setFillColor(sf::Color::White);
+	this->backgroundTexture.setSmooth(true);
+	this->backgroundTexture2.setSmooth(true);
 	this->background.setTexture(&this->backgroundTexture);
-	/*this->background1.setFillColor(sf::Color::Green);
-	this->background1.setSize(sf::Vector2f(this->window->getSize().x, 40.f));
-	this->background1.setPosition(0.f, this->window->getSize().y-40.f);*/
+	this->background2.setTexture(&this->backgroundTexture2);
+	this->background2.setPosition(this->window->getSize().x-1, 0.f);
 	
 	this->boxTexture.loadFromFile("Sprites/circle.png");
 	this->box.setTexture(this->boxTexture);
@@ -256,6 +309,13 @@ EditorState::EditorState(sf::RenderWindow* window, std::map<std::string, int>* s
 	b2Vec2 gravity(0.f, 9.8f);
 	this->world = std::make_unique<b2World>(gravity);
 
+	this->initVariables();
+	this->initBackground();
+	this->initTextures();
+	this->initPlayers();
+	this->initFonts();
+	this->initKeybinds();
+	this->initButtons();
 
 	setWall(this->window->getSize().x/2.f, this->window->getSize().y +20, this->window->getSize().x, 20);
 	setWall(-50, this->window->getSize().y/2, 1, this->window->getSize().y / 2);
@@ -265,14 +325,6 @@ EditorState::EditorState(sf::RenderWindow* window, std::map<std::string, int>* s
 	setPlatform(400, 600);
 
 	this->world->SetContactListener(new MyContactListener(m_platformFixture));
-
-	this->initVariables();
-	this->initBackground();
-	this->initTextures();
-	this->initPlayers();
-	this->initFonts();
-	this->initKeybinds();
-	this->initButtons();
 }
 
 EditorState::~EditorState()
@@ -310,6 +362,7 @@ void EditorState::updateEvents(sf::Event& event, const float& dt)
 				pixType++;
 			else
 				pixType = PIX_POINT;
+
 		}
 		if (event.key.code == sf::Keyboard::E)
 		{
@@ -329,11 +382,44 @@ void EditorState::updateEvents(sf::Event& event, const float& dt)
 			else
 				isWay = true;
 		}
-		/*if (event.key.code == sf::Keyboard::Key(this->keybinds.at("MOVE_UP")))
-		{
-			this->player->move(0.f, -1.f, dt);
-		}*/
 	}
+	if (event.type == sf::Event::MouseButtonReleased) 
+	{
+		
+		if (event.mouseButton.button == sf::Mouse::Button::Left && pixType == PIX_BODY && pixState == PIX_DYNAMIC)
+		{
+			if (this->boxes.size() > firstpoint+1)
+			{
+				for (int i = firstpoint; i < this->boxes.size(); i++)
+				{
+					if (this->boxes[i] == this->boxes.back())
+					{
+						b2WeldJointDef rDef;
+						rDef.bodyA = this->boxes.back();
+						rDef.bodyB = this->boxes[firstpoint];
+						rDef.bodyA->SetFixedRotation(true);
+						rDef.bodyB->SetFixedRotation(true);
+						float dx, dy;
+						dx = rDef.bodyA->GetPosition().x - rDef.bodyB->GetPosition().x;
+						dy = rDef.bodyA->GetPosition().y - rDef.bodyB->GetPosition().y;
+						rDef.collideConnected = true;
+						rDef.localAnchorA.Set(0, 0);
+						rDef.localAnchorB.Set(dx/1.2, dy/ 1.2);
+						this->world->CreateJoint(&rDef);
+						this->world->CreateJoint(&rDef);
+					}
+					this->boxes[i]->SetType(b2_dynamicBody);
+				}
+				firstpoint = this->boxes.size();
+			}
+			else if(boxes.size()>0)
+			{
+				this->boxes.back()->SetType(b2_dynamicBody);
+				firstpoint++;
+			}
+		}
+	}
+	
 
 }
 
@@ -372,11 +458,6 @@ void EditorState::updateInput(const float& dt)
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 	{
-
-
-		//
-
-		//
 		bool create = 1;
 		b2Vec2 pos = b2Vec2(this->mousePosView.x / SCALE, this->mousePosView.y / SCALE);
 		for (int i = 0; i < this->boxes.size(); i++) {
@@ -395,56 +476,12 @@ void EditorState::updateInput(const float& dt)
 				setPixel(this->mousePosView.x, this->mousePosView.y);
 			}
 		}
-
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle))
 	{
 		/*if (dt < 0.01) {
 			setPixel(this->mousePosView.x, this->mousePosView.y);
 		}*/
-
-		b2BodyDef bdef;
-		b2Filter f;
-		b2CircleShape circle;
-		b2PolygonShape polyg;
-		b2Body* body;
-		b2FixtureDef fdef;
-		b2Fixture* bfix;
-		b2Filter f2;
-		bdef.type = b2_dynamicBody;
-		//Filter
-		f.categoryBits = CATEGORY_BODY;
-		f.maskBits = MASK_BODY;
-		//Filter
-		bdef.position.Set(this->mousePosView.x / SCALE, this->mousePosView.y / SCALE);
-		circle.m_radius = 5 / SCALE;
-		polyg.SetAsBox(5 / SCALE, 5 / SCALE);
-		body = this->world->CreateBody(&bdef);
-		bfix = body->CreateFixture(&circle, 6);
-		bfix->SetFilterData(f);
-		bfix->SetUserData((void*)1);
-		circle.m_radius = 10 / SCALE;
-		fdef.shape = &circle;
-		//Filter
-		f2.categoryBits = CATEGORY_NOT_BODY;
-		f2.maskBits = MASK_NOT_BODY;
-		//Filter
-		bfix = body->CreateFixture(&fdef);
-		bfix->SetFilterData(f2);
-		bfix->SetUserData((void*)1);
-		body->SetUserData((void*)"box");
-		this->bodyboxes.push_back(body);
-
-
-		if (this->boxes.size() > 1 && pixType == PIX_ROPE) {
-			b2WeldJointDef rDef;
-			rDef.bodyA = this->bodyboxes[this->bodyboxes.size() - 1];
-			rDef.bodyB = this->bodyboxes[this->bodyboxes.size() - 2];
-			rDef.collideConnected = true;
-			rDef.localAnchorA.Set(0, 5 / SCALE);
-			rDef.localAnchorB.Set(0, -5 / SCALE);
-			this->world->CreateJoint(&rDef);
-		}
 
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
@@ -456,10 +493,38 @@ void EditorState::updateInput(const float& dt)
 
 void EditorState::update(const float& dt)
 {
-
 	world->Step(1.0f / 60.0f, 6, 2);
+	time += dt;
+	if (time > 2)
+	{
+		SCORE++;
+		time = 0;
+		if (SCORE == this->nextSCORE)
+		{
+			this->nextSCORE=SCORE+10;
+			if (this->platformSpeed < 7)
+			{
+				this->platformSpeed *= 1.5;
+				for (auto* it : this->platforms)
+				{
+					it->SetLinearVelocity(b2Vec2(-this->platformSpeed, 0));
+				}
+			}
+		}
+	}
+	if (firstpoint < 0)
+		firstpoint = 0;
 	
-	
+	this->background.move(-50*dt, 0);
+	this->background2.move(-50 * dt, 0);
+	if (background.getPosition().x + this->window->getSize().x-1 < 0)
+	{
+		this->background.setPosition(this->window->getSize().x-1, 0.f);
+	}
+	if (background2.getPosition().x + this->window->getSize().x-1 < 0)
+	{
+		this->background2.setPosition(this->window->getSize().x-1, 0.f);
+	}
 	this->updateMousePositions();
 	this->updateInput(dt);
 	this->updateButtons();
@@ -467,12 +532,10 @@ void EditorState::update(const float& dt)
 
 	this->player->update(dt);
 
-	if (dt > 0.01 || (isWay && boxes.size()>50))
+	if (dt > 0.01 || (isWay && boxes.size()>30))
 	{
 		this->deletePixels();
 	}
-	
-	
 }
 
 void EditorState::render(sf::RenderTarget* target)
@@ -483,6 +546,7 @@ void EditorState::render(sf::RenderTarget* target)
 	}
 
 	target->draw(this->background);
+	target->draw(this->background2);
 	//target->draw(this->background1);
 
 	this->renderButtons(target);
@@ -491,21 +555,24 @@ void EditorState::render(sf::RenderTarget* target)
 	this->renderBoxes(target);
 	this->player->render(target);
 	if (popfront) {
-		renderText("remove from end",0,0,24,target);
+		renderText("remove from end", 0, 0, 24, target);
 	}
 	else
 	{
-		renderText("remove from front", 0, 0, 24,target);
+		renderText("remove from front", 0, 0, 24, target);
 	}
 	switch (pixType) {
 	case PIX_POINT:
-		renderText("Point", 0, 20,24, target);
+		renderText("Point", 0, 20, 24, target);
 		break;
 	case PIX_ROPE:
-		renderText("Rope", 0, 20,24, target);
+		renderText("Rope", 0, 20, 24, target);
+		break;
+	case PIX_BODY:
+		renderText("Body", 0, 20, 24, target);
 		break;
 	case PIX_SHIELD:
-		renderText("Shield", 0, 20, 24,target);
+		renderText("Shield", 0, 20, 24, target);
 		break;
 	case PIX_SWORD:
 		renderText("Sword", 0, 20, 24, target);
@@ -514,26 +581,31 @@ void EditorState::render(sf::RenderTarget* target)
 
 	switch (pixState) {
 	case PIX_KINETIC:
-		renderText("Static state", 0, 40,24, target);
+		renderText("Static state", 0, 40, 24, target);
 		break;
 	case PIX_DYNAMIC:
-		renderText("Dynamic state", 0, 40,24, target);
+		renderText("Dynamic state", 0, 40, 24, target);
 		break;
 	}
-	if(isWay)
+	if (isWay)
 	{
 		renderText("Road mode", 0, 60, 24, target);
 	}
 	else {
 		renderText("Normal mode", 0, 60, 24, target);
 	}
+	renderText("SCORE: ", (this->window->getSize().x / 2), 0, 24, target);
+	renderNumbers(SCORE, (this->window->getSize().x/2)+70, 0, 24, target);
+
+	renderText("SPEED: ", (this->window->getSize().x / 2)+200, 0, 24, target);
+	renderNumbers(platformSpeed, (this->window->getSize().x / 2)+270, 0, 24, target);
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
 	{
 		//this->mouseText("Delete", target);
-		renderText("Delete", this->mousePosView.x, this->mousePosView.y-20, 12, target);
+		renderText("Delete", this->mousePosView.x, this->mousePosView.y - 20, 12, target);
 	}
-	else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)|| sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle))
+	else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) || sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle))
 	{
 		//this->mouseText("Create", target);
 		renderText("Create", this->mousePosView.x, this->mousePosView.y - 20, 12, target);
@@ -563,29 +635,17 @@ void EditorState::renderBoxes(sf::RenderTarget* target)
 			this->boxes[i]->GetPosition().y * SCALE > this->window->getSize().y ||
 			this->boxes[i]->GetPosition().y * SCALE < 0)
 		{
+			/*for (b2JointEdge* f = this->boxes[i]->GetJointList(); f != 0; f = f->next) {
+				this->world->DestroyJoint(f->joint);
+			}*/
 			this->world->DestroyBody(this->boxes[i]);
 			this->boxes[i]->SetUserData(NULL);
 			this->boxes[i] = NULL;
 			this->boxes.erase(this->boxes.begin() + i);
 			this->boxesColors.erase(this->boxesColors.begin() + i);
-		}
-	}
+			if (firstpoint!=0 && i < firstpoint )
+				firstpoint--;
 
-	for (int i = 0; i < this->bodyboxes.size(); i++) {
-		b2Vec2 pos = this->bodyboxes[i]->GetPosition();
-		box.setPosition(pos.x * SCALE, pos.y * SCALE);
-		box.setColor(sf::Color::Black);
-		target->draw(box);
-
-		if (this->bodyboxes[i]->GetPosition().x * SCALE > this->window->getSize().x ||
-			this->bodyboxes[i]->GetPosition().x * SCALE < 0 ||
-			this->bodyboxes[i]->GetPosition().y * SCALE > this->window->getSize().y ||
-			this->bodyboxes[i]->GetPosition().y * SCALE < 0)
-		{
-			this->world->DestroyBody(this->bodyboxes[i]);
-			this->bodyboxes[i]->SetUserData(NULL);
-			this->bodyboxes[i] = NULL;
-			this->bodyboxes.erase(this->bodyboxes.begin() + i);
 		}
 	}
 
@@ -596,10 +656,27 @@ void EditorState::updatePlatforms()
 {
 	if (platforms.size() <= 10)
 	{
-		std::uniform_int_distribution<int> distributionX(1, this->window->getSize().x / 250);
-		std::uniform_int_distribution<int> distributionY(1,this->window->getSize().y/ 250);
+		std::uniform_int_distribution<int> distributionX(1, 3);
+		std::uniform_int_distribution<int> distributionY(1,this->window->getSize().y/ 200);
 
-		setPlatform(this->window->getSize().x + distributionX(generator) * 250, distributionY(generator) * 250);
+		float cox, coy;
+
+		if (platforms.size() > 1)
+		{
+			setPlatform(platforms.back()->GetPosition().x*SCALE + 400, distributionY(generator) * 200);
+			cox = platforms.back()->GetPosition().x * SCALE + 400;
+			coy = distributionY(generator) * 200;
+			while (coy < platforms.back()->GetPosition().y * SCALE+10 && coy > platforms.back()->GetPosition().y * SCALE - 10)
+			{
+				coy = distributionY(generator) * 200;
+			}
+		}
+		else
+		{
+			cox = this->window->getSize().x + 250;
+			coy = distributionY(generator) * 200;
+		}
+		setPlatform(cox, coy);
 
 	}
 }
@@ -631,6 +708,19 @@ void EditorState::renderText(std::string s, float x, float y, unsigned int size,
 	mouseText.setCharacterSize(size);
 	std::stringstream ss;
 	ss << s;
+	mouseText.setString(ss.str());
+	target->draw(mouseText);
+}
+
+void EditorState::renderNumbers(float s, float x, float y, unsigned int size, sf::RenderTarget* target)
+{
+	sf::Text mouseText;
+	mouseText.setPosition(x, y);
+	mouseText.setFont(this->font);
+	mouseText.setFillColor(sf::Color::Black);
+	mouseText.setCharacterSize(size);
+	std::stringstream ss;
+	ss <<s;
 	mouseText.setString(ss.str());
 	target->draw(mouseText);
 }

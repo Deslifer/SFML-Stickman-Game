@@ -37,7 +37,7 @@ void EntityBox2D::createAnimationComponent(sf::Texture& texture_sheet)
 
 void EntityBox2D::createPhysicComponent()
 {
-	this->physicComponent = new PhysicComponent(this->world,this->sprite,"player");
+	this->physicComponent = new PhysicComponent(this->world,this->sprite);
 }
 
 //Functions

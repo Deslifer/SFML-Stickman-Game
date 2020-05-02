@@ -47,14 +47,16 @@ void MyContactListener::PreSolve(b2Contact* contact, const b2Manifold* oldManifo
 	b2WorldManifold worldManifold;
 	contact->GetWorldManifold(&worldManifold);
 
-	//check if contact points are moving downward
-	for (int i = 0; i < numPoints; i++) {
-		b2Vec2 pointVel = otherBody->GetLinearVelocityFromWorldPoint(worldManifold.points[i]);
-		if (pointVel.y > 0)
+	if (otherBody->GetUserData() == (void*)"player")
+	{
+		if (otherBody->GetPosition().y + (163 / 2) / 30.f < platformBody->GetPosition().y-3.f/30.f)
 		{
-			//contact->SetEnabled(true);
 			return;
 		}
+	}
+	else
+	{
+		return;
 	}
 
 	contact->SetEnabled(false);

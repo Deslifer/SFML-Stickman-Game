@@ -20,12 +20,14 @@ static short CATEGORY_PLATFORM = 0x0002;
 static short CATEGORY_NOT_BODY = 0x0004;
 static short CATEGORY_BODY_SHIELD = 0x0008;
 static short CATEGORY_PLAYER = 0x0010;
+static short CATEGORY_PIXEL = 0x0012;
 
 static short MASK_BODY = CATEGORY_PLAYER|CATEGORY_BODY | CATEGORY_PLATFORM;
 static short MASK_BODY_SHIELD = CATEGORY_PLAYER|CATEGORY_BODY | CATEGORY_PLATFORM | CATEGORY_BODY_SHIELD;
 static short MASK_BODY_WITHOUT_PLATFORM = CATEGORY_BODY;
 static short MASK_PLAYER= CATEGORY_BODY | CATEGORY_PLATFORM;
 static short MASK_PLATFORM = CATEGORY_PLAYER|CATEGORY_BODY;
+static short MASK_PIXEL = CATEGORY_PLAYER | CATEGORY_BODY| CATEGORY_PLATFORM;
 static short MASK_NOT_BODY = 0;
 
 class PhysicComponent
@@ -34,7 +36,6 @@ private:
 	sf::Sprite& sprite;
 	float width;
 	float height;
-	void* userData = nullptr;
 	b2World* world = nullptr;
 	b2PolygonShape shape;
 	b2BodyDef bdef;
@@ -43,7 +44,7 @@ private:
 	const float DEG = 57.29577f;
 
 public:
-	PhysicComponent(b2World* world, sf::Sprite& sprite, std::string userData);
+	PhysicComponent(b2World* world, sf::Sprite& sprite);
 	virtual ~PhysicComponent();
 	sf::Vector2f getPosition();
 	b2Vec2 getVelocity();

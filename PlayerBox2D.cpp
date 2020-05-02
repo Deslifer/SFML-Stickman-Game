@@ -21,7 +21,7 @@ PlayerBox2D::PlayerBox2D(b2World* world,float x, float y, sf::Texture& texture_s
 
 	this->initComponents();
 
-	this->createMovementComponent(100.f, 15.f, 5.f);
+	this->createMovementComponent(300.f, 15.f, 5.f);
 	this->createAnimationComponent(texture_sheet);
 	this->sprite.setOrigin(43.f, 81.5f);
 	this->animationComponent->addAnimation("IDLE_RIGHT", 0.5f, 0, 0, 9, 0, 86, 163);

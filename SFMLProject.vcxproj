@@ -129,7 +129,6 @@
     <ClCompile Include="AnimationComponent.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="EditorState.cpp" />
-    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EntityBox2D.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameState.cpp" />
@@ -137,9 +136,17 @@
     <ClCompile Include="MainMenuState.cpp" />
     <ClCompile Include="MovementComponent.cpp" />
     <ClCompile Include="MyContactListener.cpp" />
+    <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="PhysicComponent.cpp" />
-    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Pixel.cpp" />
+    <ClCompile Include="PixelBody.cpp" />
+    <ClCompile Include="PixelControl.cpp" />
+    <ClCompile Include="PixelPoint.cpp" />
+    <ClCompile Include="PixelRope.cpp" />
+    <ClCompile Include="PixelShield.cpp" />
+    <ClCompile Include="PixelSword.cpp" />
     <ClCompile Include="PlayerBox2D.cpp" />
+    <ClCompile Include="SettingState.cpp" />
     <ClCompile Include="State.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -147,16 +154,23 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Collision.hpp" />
     <ClInclude Include="EditorState.h" />
-    <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityBox2D.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="MainMenuState.h" />
     <ClInclude Include="MovementComponent.h" />
     <ClInclude Include="MyContactListener.h" />
+    <ClInclude Include="PauseMenu.h" />
     <ClInclude Include="PhysicComponent.h" />
-    <ClInclude Include="Player.h" />
+    <ClInclude Include="Pixel.h" />
+    <ClInclude Include="PixelBody.h" />
+    <ClInclude Include="PixelControl.h" />
+    <ClInclude Include="PixelPoint.h" />
+    <ClInclude Include="PixelRope.h" />
+    <ClInclude Include="PixelShield.h" />
+    <ClInclude Include="PixelSword.h" />
     <ClInclude Include="PlayerBox2D.h" />
+    <ClInclude Include="SettingState.h" />
     <ClInclude Include="State.h" />
   </ItemGroup>
   <ItemGroup>

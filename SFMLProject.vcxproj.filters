@@ -25,6 +25,9 @@
     <Filter Include="Box2D">
       <UniqueIdentifier>{04dc59ad-b382-46bf-80aa-87c921f26870}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pixels">
+      <UniqueIdentifier>{9714dc2f-7e15-4afa-a7f5-8c715d24bc2c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -38,12 +41,6 @@
     </ClCompile>
     <ClCompile Include="MovementComponent.cpp">
       <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Entities</Filter>
     </ClCompile>
     <ClCompile Include="GameState.cpp">
       <Filter>States</Filter>
@@ -60,17 +57,44 @@
     <ClCompile Include="EditorState.cpp">
       <Filter>States</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerBox2D.cpp">
-      <Filter>Box2D</Filter>
-    </ClCompile>
-    <ClCompile Include="EntityBox2D.cpp">
-      <Filter>Box2D</Filter>
-    </ClCompile>
     <ClCompile Include="PhysicComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="MyContactListener.cpp">
       <Filter>Box2D</Filter>
+    </ClCompile>
+    <ClCompile Include="PauseMenu.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityBox2D.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerBox2D.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelControl.cpp">
+      <Filter>Pixels</Filter>
+    </ClCompile>
+    <ClCompile Include="Pixel.cpp">
+      <Filter>Pixels</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelRope.cpp">
+      <Filter>Pixels</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelPoint.cpp">
+      <Filter>Pixels</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelSword.cpp">
+      <Filter>Pixels</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelShield.cpp">
+      <Filter>Pixels</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelBody.cpp">
+      <Filter>Pixels</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -82,12 +106,6 @@
     </ClInclude>
     <ClInclude Include="MovementComponent.h">
       <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Entities</Filter>
     </ClInclude>
     <ClInclude Include="State.h">
       <Filter>States</Filter>
@@ -107,17 +125,44 @@
     <ClInclude Include="EditorState.h">
       <Filter>States</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerBox2D.h">
-      <Filter>Box2D</Filter>
-    </ClInclude>
-    <ClInclude Include="EntityBox2D.h">
-      <Filter>Box2D</Filter>
-    </ClInclude>
     <ClInclude Include="PhysicComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="MyContactListener.h">
       <Filter>Box2D</Filter>
+    </ClInclude>
+    <ClInclude Include="PauseMenu.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityBox2D.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerBox2D.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelControl.h">
+      <Filter>Pixels</Filter>
+    </ClInclude>
+    <ClInclude Include="Pixel.h">
+      <Filter>Pixels</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelRope.h">
+      <Filter>Pixels</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelPoint.h">
+      <Filter>Pixels</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelSword.h">
+      <Filter>Pixels</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelShield.h">
+      <Filter>Pixels</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelBody.h">
+      <Filter>Pixels</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

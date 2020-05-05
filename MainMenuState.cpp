@@ -53,7 +53,7 @@ void MainMenuState::initButtons()
 		sf::Color(70, 70, 70, 200), sf::Color(150, 150, 150, 250), sf::Color(20, 20, 20, 50),
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 	
-	this->buttons["SETTINGS"] = new Button(
+	this->buttons["SETTING_STATE"] = new Button(
 		100, 200, 150, 50,
 		&this->font, "Settings", 50,
 		sf::Color(70, 70, 70, 200), sf::Color(150, 150, 150, 250), sf::Color(20, 20, 20, 50),
@@ -105,11 +105,14 @@ void MainMenuState::updateButtons()
 		this->states->push(new GameState(this->window,this->supportedKeys,this->states));
 	}
 	//Settings
-
+	if (this->buttons["SETTING_STATE"]->isPressed())
+	{
+		this->states->push(new SettingState(this->window, this->supportedKeys, this->states));
+	}
 	//Editor
 	if (this->buttons["EDITOR_STATE"]->isPressed())
 	{
-		this->states->push(new EditorState(this->window, this->supportedKeys, this->states));
+		//this->states->push(new EditorState());
 	}
 	//Quit
 	if (this->buttons["EXIT_STATE"]->isPressed())
@@ -163,6 +166,6 @@ void MainMenuState::renderButtons(sf::RenderTarget* target)
 {
 	for (auto& it : this->buttons)
 	{
-		it.second->render(target);
+		it.second->render(*target);
 	}
 }

@@ -1,10 +1,8 @@
 #pragma once
-#include "GameState.h"
-#include "EditorState.h"
-#include "SettingState.h"
-#include "Button.h"
 
-class MainMenuState :
+#include "State.h"
+#include "Button.h"
+class SettingState:
 	public State
 {
 private:
@@ -21,17 +19,19 @@ private:
 	void initFonts();
 	void initKeybinds();
 	void initButtons();
-
 public:
-	MainMenuState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states);
-	virtual ~MainMenuState();
-	 
+	SettingState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states);
+	virtual ~SettingState();
+
+	//Accessors
+
 	//Functions
 	void updateButtons();
-	void updateEvents(sf::Event &event,const float& dt);
+	void updateEvents(sf::Event& event, const float& dt);
 	void updateInput(const float& dt);
 	void update(const float& dt);
-	void render(sf::RenderTarget* target = NULL);
 	void renderButtons(sf::RenderTarget* target = NULL);
+	void render(sf::RenderTarget* target = NULL);
+	
 };
 

@@ -22,7 +22,7 @@ PhysicComponent::PhysicComponent(
 
 	b2Fixture* bfix;
 	this->shape.SetAsBox((9 * 0.5f - b2_polygonRadius) / SCALE, 30 / SCALE);
-	bfix = this->body->CreateFixture(&shape, 1);
+	bfix = this->body->CreateFixture(&shape, 50);
 	bfix->SetFilterData(f);
 	bfix->SetUserData((void*)"body");
 
@@ -44,7 +44,7 @@ PhysicComponent::PhysicComponent(
 	//SHIELDS
 	b2CircleShape circle3;
 	circle3.m_radius = ((163.f-5.f)/2.f) / SCALE;
-	bfix = this->body->CreateFixture(&circle3, -1);
+	bfix = this->body->CreateFixture(&circle3, 0);
 	f.categoryBits = CATEGORY_BODY_SHIELD;
 	f.maskBits = -1;
 	bfix->SetFilterData(f);
@@ -82,12 +82,13 @@ b2Body* PhysicComponent::getBody()
 bool PhysicComponent::onGround()
 {
 	b2Vec2 pos = body->GetPosition();
-	pos.y += (163 / 2 - 3) / SCALE;
+	pos.y += (163 / 2+1) / SCALE;
 	for (b2Body* it = world->GetBodyList(); it != 0; it = it->GetNext())
 		if (it->GetUserData() == (void*)"platform" || it->GetUserData() == (void*)"pixel" || it->GetUserData() == (void*)"wall")
 		{
 			for (b2Fixture* f = it->GetFixtureList(); f != 0; f = f->GetNext())
-				if (f->TestPoint(pos))
+
+				if (f->TestPoint(pos) && f->GetFilterData().categoryBits!= CATEGORY_NOT_BODY)
 					return true;
 		}
 	return false;

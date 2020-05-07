@@ -6,7 +6,7 @@ class PixelSword :
 private:
 	b2MotorJointDef mDef2;
 public:
-	PixelSword(b2World* world, float x, float y, b2BodyType type, float size, b2Body* player);
+	PixelSword(b2World* world, sf::Sprite sprite, float x, float y, b2BodyType type, float size, b2Body* player);
 	virtual ~PixelSword();
 
 	void update(const float& dt);

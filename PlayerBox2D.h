@@ -13,6 +13,7 @@ private:
 	void initComponents();
 	const float SCALE = 30.f;
 	const float DEG = 57.29577f;
+	
 
 
 public:

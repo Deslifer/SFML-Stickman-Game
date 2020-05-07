@@ -1,5 +1,5 @@
 #include "GameState.h"
-#include <random>
+#include <random>aa
 std::default_random_engine generator;
 std::uniform_int_distribution<int> distribution(0, 255);
 
@@ -53,9 +53,10 @@ void GameState::initVariables()
 {
 	this->SCORE = 0;
 	this->nextSCORE = 3;
+	this->platformSpeed = 1;
+	this->pixScale = 0;
 	this->pixState = 0;
 	this->pixType = 0;
-	this->platformSpeed = 1;
 	this->popfront = 1;
 	this->isWay = 0;
 	this->time = 0;
@@ -197,13 +198,19 @@ void GameState::updateEvents(sf::Event& event, const float& dt)
 		if (event.mouseWheel.delta == 1)
 		{
 
-			popfront = 0;
+			this->pixScale+=2;
+
 		}
 		else if (event.mouseWheel.delta == -1)
 		{
-			popfront = 1;
+			if(pixScale>-8)
+			this->pixScale-=2;
 		}
+		this->pixels->setScale(pixScale);
 	}
+	if (event.type == sf::Event::LostFocus)
+		this->pauseState();
+
 	if (event.type == sf::Event::KeyPressed)
 	{
 		if (event.key.code == sf::Keyboard::Q)
@@ -270,11 +277,12 @@ void GameState::updatePlayerInput(const float& dt)
 		this->pixels->newPixel(this->mousePosView.x, this->mousePosView.y);
 		
 	}
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle))
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle) && this->getKeyTime())
 	{
-		/*if (dt < 0.01) {
-			setPixel(this->mousePosView.x, this->mousePosView.y);
-		}*/
+		if (popfront)
+			popfront = 0;
+		else
+			popfront = 1;
 
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
@@ -313,8 +321,8 @@ void GameState::update(const float& dt)
 			}
 		}
 		this->pixels->update(dt, isWay, popfront, pixState, pixType);
-		this->background.move(-50 * dt, 0);
-		this->background2.move(-50 * dt, 0);
+		this->background.setPosition(this->background.getPosition().x - 0.1* platformSpeed, this->background.getPosition().y);
+		this->background2.setPosition(this->background2.getPosition().x - 0.1*platformSpeed, this->background2.getPosition().y);
 		if (background.getPosition().x + this->window->getSize().x - 1 < 0)
 		{
 			this->background.setPosition(this->window->getSize().x - 1, 0.f);
@@ -337,6 +345,7 @@ void GameState::update(const float& dt)
 
 void GameState::render(sf::RenderTarget* target)
 {
+	
 	if (!target)
 	{
 		target = this->window;
@@ -351,6 +360,7 @@ void GameState::render(sf::RenderTarget* target)
 
 	if (!this->paused)
 	{
+
 		if (popfront) {
 			renderText("remove from end", 0, 0, 24, target);
 		}
@@ -391,6 +401,7 @@ void GameState::render(sf::RenderTarget* target)
 		else {
 			renderText("Normal mode", 0, 60, 24, target);
 		}
+		renderNumbers(pixScale, 0, 80, 24, target);
 		renderText("SCORE: ", (this->window->getSize().x / 2), 0, 24, target);
 		renderNumbers(SCORE, (this->window->getSize().x / 2) + 70, 0, 24, target);
 

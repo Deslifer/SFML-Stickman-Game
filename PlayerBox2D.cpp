@@ -38,6 +38,8 @@ PlayerBox2D::~PlayerBox2D()
 void PlayerBox2D::update(const float& dt)
 {
 
+	
+
 	this->movementComponent->updateBody(dt,this->physicComponent->getBody(),this->physicComponent->onGround());
 
 	if (this->movementComponent->getState(IDLE))

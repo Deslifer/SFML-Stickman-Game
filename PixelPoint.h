@@ -5,7 +5,7 @@ class PixelPoint :
 {
 private:
 public:
-	PixelPoint(b2World* world, float x, float y, b2BodyType type, float size);
+	PixelPoint(b2World* world, sf::Sprite sprite, float x, float y, b2BodyType type, float size);
 	virtual ~PixelPoint();
 
 	void update(const float& dt);

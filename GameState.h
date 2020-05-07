@@ -43,6 +43,7 @@ private:
 	int SCORE;
 	int nextSCORE;
 
+	int pixScale;
 	int pixState;
 	int pixType;
 	bool popfront;

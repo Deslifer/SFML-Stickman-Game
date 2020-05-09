@@ -335,6 +335,16 @@ void GameState::update(const float& dt)
 		this->updatePlatforms();
 		this->player->update(dt);
 
+
+		//
+		if (this->player->getPosition().x  > this->window->getSize().x + 200 ||
+			this->player->getPosition().x  < 0 - 200 ||
+			this->player->getPosition().y > this->window->getSize().y + 200)
+		{
+			this->endState();
+		}
+		//
+
 	}
 	else //Paused update
 	{

@@ -158,8 +158,8 @@ GameState::GameState(sf::RenderWindow* window, std::map<std::string, int>* suppo
 
 	pixels = new PixelControl(this->world.get(),this->player->getBody(),this->window->getSize().x, this->window->getSize().y);
 
-	setWall(-50, this->window->getSize().y / 2, 1, this->window->getSize().y / 2);
-	setWall(this->window->getSize().x + 50, this->window->getSize().y / 2, 1, this->window->getSize().y / 2);
+	//setWall(-50, this->window->getSize().y / 2, 1, this->window->getSize().y / 2);
+	//setWall(this->window->getSize().x + 50, this->window->getSize().y / 2, 1, this->window->getSize().y / 2);
 
 	setPlatform(400, 600);
 

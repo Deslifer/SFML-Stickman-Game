@@ -1,15 +1,20 @@
 #include "PixelControl.h"
 
-PixelControl::PixelControl(b2World* world, b2Body* player, float windowX, float windowY)
-	:world(world), player(player), windowX(windowX), windowY(windowY)
+PixelControl::PixelControl(b2World* world, b2Body* player, float windowX, float windowY, bool withMaxPixels)
+	:world(world), player(player), windowX(windowX), windowY(windowY),withMaxPixels(withMaxPixels)
 {
 	originScale = 0.01;
-	maxPixels = 10;
+	maxPixels = 30;
+	maxTimer = 2;
 	firstpoint = 0;
 	pixState = 0;
 	pixType = 0;
 	popfront = 1;
 	isWay = 0;
+	if (!this->font.loadFromFile("Fonts/THANK YOU KOBE.ttf"))
+	{
+		throw("ERROR::GameState::COULD NOT LOAD FONT");
+	}
 	this->texture.loadFromFile("Sprites/circleBig.png");
 	this->sprite.setTexture(this->texture);
 	this->sprite.setScale(originScale, originScale);
@@ -21,6 +26,7 @@ PixelControl::~PixelControl()
 	pixels.clear();
 	newFixtures.clear();
 	newBodies.clear();
+	pixelsTimer.clear();
 
 }
 
@@ -39,8 +45,12 @@ void PixelControl::newPixel(float x, float y)
 			break;
 	}
 
-	if (create)
+	if (create && ((maxPixels>0 && withMaxPixels && maxPixels>=(sprite.getScale().x / originScale)) || !withMaxPixels))
 	{
+		if (maxPixels > 0 && withMaxPixels)
+		{
+			maxPixels -= sprite.getScale().x / originScale;
+		}
 		if (pixType != PIX_BODY || pixState == PIX_KINETIC)
 			firstpoint++;
 
@@ -63,6 +73,9 @@ void PixelControl::newPixel(float x, float y)
 			pixels.push_back(new PixelSword(this->world, this->sprite, x, y, type, this->texture.getSize().x * this->sprite.getScale().x, this->player, originScale));
 		else
 			pixels.push_back(new PixelPoint(this->world, this->sprite, x, y, type, this->texture.getSize().x * this->sprite.getScale().x, originScale));
+		if(withMaxPixels)
+			pixelsTimer.push_back(maxTimer);
+
 	}
 }
 
@@ -92,6 +105,8 @@ void PixelControl::deletePixel()
 			this->pixels.front()->getBody()->SetUserData(NULL);
 			this->pixels.front() = NULL;
 			this->pixels.erase(this->pixels.begin());
+			if (withMaxPixels)
+				this->pixelsTimer.erase(this->pixelsTimer.begin());
 
 
 
@@ -119,9 +134,12 @@ void PixelControl::deletePixel()
 			this->pixels.back()->getBody()->SetUserData(NULL);
 			this->pixels.back() = NULL;
 			this->pixels.pop_back();
+			if (withMaxPixels)
+				this->pixelsTimer.pop_back();
 			if (firstpoint != 0 && firstpoint != this->pixels.size())
 				firstpoint = this->pixels.size();
 		}
+		
 	}
 }
 
@@ -212,7 +230,7 @@ void PixelControl::mouseJoint(float x, float y, bool first,bool released,b2Body*
 void PixelControl::createBody()
 {
 	float centerX = 0, centerY = 0, count = 0;;
-	if (this->pixels.size() > (firstpoint+1))
+	if (this->pixels.size()-1 > (firstpoint))
 	{
 
 		b2Body* centerPixel = figure();
@@ -288,6 +306,16 @@ void PixelControl::setScale(float scale)
 	this->sprite.setScale(originScale*scale, originScale * scale);
 }
 
+void PixelControl::addPixel()
+{
+	maxPixels++;
+}
+
+int PixelControl::getMaxPixels()
+{
+	return maxPixels;
+}
+
 void PixelControl::update(const float& dt, bool isWay, bool popfront, int pixState, int pixType)
 {
 	//std::cout << this->world->GetBodyCount()<<std::endl;
@@ -301,7 +329,44 @@ void PixelControl::update(const float& dt, bool isWay, bool popfront, int pixSta
 	this->pixState = pixState;
 	this->pixType = pixType;
 
-	if (/*dt > 0.012  ||*/ (this->isWay && pixels.size() > 30))
+	if (withMaxPixels)
+	{
+		if (maxPixels < 0)
+			maxPixels = 0;
+		for (int i = 0; i < this->pixelsTimer.size(); i++)
+		{
+			pixelsTimer[i] -= dt;
+			if (pixelsTimer[i] < 0)
+			{
+				this->world->DestroyBody(this->pixels[i]->getBody());
+				this->pixels[i]->getBody()->SetUserData(NULL);
+				this->pixels[i] = NULL;
+				this->pixels.erase(this->pixels.begin() + i);
+				this->pixelsTimer.erase(this->pixelsTimer.begin() + i);
+				if (firstpoint != 0 && i < firstpoint)
+					firstpoint--;
+
+				std::map<int, b2Fixture*>::iterator it = this->newFixtures.find(i);
+				if (it != this->newFixtures.end()) {
+					if (it->second != NULL && it->first != NULL)
+					{
+						b2Body* b = it->second->GetBody();
+						if (b != NULL) {
+							b->DestroyFixture(it->second);
+							this->newFixtures.erase(it);
+						}
+						else
+						{
+							this->newFixtures.erase(it);
+						}
+					}
+				}
+				i--;
+			}
+		}
+	}
+
+	if (/*dt > 0.012  || */(this->isWay && pixels.size() > 30))
 	{
 		this->deletePixel();
 
@@ -313,9 +378,29 @@ void PixelControl::update(const float& dt, bool isWay, bool popfront, int pixSta
 
 void PixelControl::render(sf::RenderTarget* target)
 {
+
 	for (int i = 0; i < this->pixels.size(); i++) 
 	{
 		pixels[i]->render(target);
+		if (withMaxPixels)
+		{
+			sf::Text timerText;
+			timerText.setFont(this->font);
+			timerText.setFillColor(sf::Color::Black);
+			timerText.setCharacterSize(pixels[i]->getSize());
+			timerText.setOrigin(pixels[i]->getSize()/4.5, pixels[i]->getSize()/1.5);
+			timerText.setPosition(
+				this->pixels[i]->getBody()->GetPosition().x * SCALE,
+				this->pixels[i]->getBody()->GetPosition().y * SCALE
+			);
+
+
+			std::stringstream ss;
+			ss << (int)pixelsTimer[i]+1;
+			timerText.setString(ss.str());
+			target->draw(timerText);
+
+		}
 		if (this->pixels[i]->getBody()->GetPosition().x * SCALE > this->windowX + pixels[i]->getSize() ||
 			this->pixels[i]->getBody()->GetPosition().x * SCALE < 0-pixels[i]->getSize() ||
 			this->pixels[i]->getBody()->GetPosition().y * SCALE > this->windowY + pixels[i]->getSize())
@@ -325,6 +410,11 @@ void PixelControl::render(sf::RenderTarget* target)
 			this->pixels[i]->getBody()->SetUserData(NULL);
 			this->pixels[i] = NULL;
 			this->pixels.erase(this->pixels.begin() + i);	
+			if (withMaxPixels)
+			{
+				this->pixelsTimer.erase(this->pixelsTimer.begin() + i);
+			}
+			
 			if (firstpoint != 0 && i < firstpoint)
 				firstpoint--;
 

@@ -162,7 +162,7 @@ GameState::GameState(sf::RenderWindow* window, std::map<std::string, int>* suppo
 	this->initPlayers();
 	this->initKeybinds();
 
-	pixels = new PixelControl(this->world.get(),this->player->getBody(),this->window->getSize().x, this->window->getSize().y);
+	pixels = new PixelControl(this->world.get(),this->player->getBody(),this->window->getSize().x, this->window->getSize().y,1);
 
 	//setWall(-50, this->window->getSize().y / 2, 1, this->window->getSize().y / 2);
 	//setWall(this->window->getSize().x + 50, this->window->getSize().y / 2, 1, this->window->getSize().y / 2);
@@ -310,6 +310,7 @@ void GameState::update(const float& dt)
 		if (time > 2)
 		{
 			SCORE++;
+			this->pixels->addPixel();
 			time = 0;
 			if (SCORE == this->nextSCORE)
 			{
@@ -421,7 +422,12 @@ void GameState::render(sf::RenderTarget* target)
 		else {
 			renderText("Normal mode", 0, 60, 24, target);
 		}
-		renderNumbers(pixScale, 0, 80, 24, target);
+		renderText("Pixel size: ", 0, 80, 24, target);
+		renderNumbers(pixScale, 110, 80, 24, target);
+
+		renderText("Pixels left: ", 0, 100, 24, target);
+		renderNumbers(this->pixels->getMaxPixels(), 120, 100, 24, target);
+
 		renderText("SCORE: ", (this->window->getSize().x / 2), 0, 24, target);
 		renderNumbers(SCORE, (this->window->getSize().x / 2) + 70, 0, 24, target);
 

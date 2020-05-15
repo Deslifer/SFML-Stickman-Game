@@ -26,12 +26,12 @@ void SandboxState::setWall(int x, int y, int w, int h)
 
 void SandboxState::initVariables()
 {
-	this->firstJoint = 1;
-	this->pixScale = 1;
-	this->pixState = 0;
-	this->pixType = 1;
-	this->popfront = 1;
-	this->isWay = 0;
+	firstJoint = 1;
+	pixScale = 1;
+	pixState = 0;
+	pixType = 1;
+	popfront = 1;
+	isWay = 0;
 }
 
 void SandboxState::initBackground()
@@ -116,7 +116,7 @@ SandboxState::SandboxState(sf::RenderWindow* window, std::map<std::string, int>*
 	this->initPlayers();
 	this->initKeybinds();
 
-	pixels = new PixelControl(this->world.get(), this->player->getBody(), this->window->getSize().x, this->window->getSize().y);
+	pixels = new PixelControl(this->world.get(), this->player->getBody(), this->window->getSize().x, this->window->getSize().y,0);
 	//setWall(-50, this->window->getSize().y / 2, 1, this->window->getSize().y / 2);
 	//setWall(this->window->getSize().x + 50, this->window->getSize().y / 2, 1, this->window->getSize().y / 2);
 	setWall(this->window->getSize().x / 2, this->window->getSize().y+10, this->window->getSize().x*2.f, 10);
@@ -380,8 +380,8 @@ void SandboxState::render(sf::RenderTarget* target)
 		else {
 			renderText("Normal mode", 0, 60, 24, target);
 		}
-		renderNumbers(pixScale, 0, 80, 24, target);
-
+		renderText("Pixel size: ", 0, 80, 24, target);
+		renderNumbers(pixScale, 110, 80, 24, target);
 		target->draw(this->helpSprite);
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))

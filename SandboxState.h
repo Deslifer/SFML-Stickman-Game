@@ -28,7 +28,7 @@ private:
 	std::unique_ptr<b2World> world;
 
 	bool firstJoint;
-	b2Body* Ground;
+	b2Body* Ground = nullptr;
 
 	int pixScale;
 	int pixState;

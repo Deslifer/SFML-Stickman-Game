@@ -29,9 +29,6 @@ private:
 	float acceleration;
 	float deceleration;
 
-	const float SCALE = 30.f;
-	const float DEG = 57.29577f;
-
 	sf::Vector2f velocity;
 
 	//Initialazer functions

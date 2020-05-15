@@ -1,5 +1,5 @@
 #include "GameState.h"
-#include <random>aa
+#include <random>
 std::default_random_engine generator;
 std::uniform_int_distribution<int> distribution(0, 255);
 
@@ -51,12 +51,13 @@ void GameState::setPlatform(float x, float y)
 
 void GameState::initVariables()
 {
+	this->firstJoint = 1;
 	this->SCORE = 0;
 	this->nextSCORE = 3;
 	this->platformSpeed = 1;
-	this->pixScale = 0;
+	this->pixScale = 1;
 	this->pixState = 0;
-	this->pixType = 0;
+	this->pixType = 1;
 	this->popfront = 1;
 	this->isWay = 0;
 	this->time = 0;
@@ -93,6 +94,11 @@ void GameState::initBackground()
 	this->background2.setTexture(&this->backgroundTexture2);
 	this->background2.setPosition(this->window->getSize().x - 1, 0.f);
 
+	this->helpTexture.loadFromFile("Sprites/pixelTypes.png");
+	this->helpSprite.setTexture(this->helpTexture);
+	this->helpSprite.setTextureRect(sf::IntRect(0, 0, 171, 58));
+	this->helpSprite.setPosition(this->window->getSize().x / 2 - this->helpTexture.getSize().x - 10, 0);
+
 	this->platformTexture.loadFromFile("Sprites/platform.png");
 	this->platformTexture.setSmooth(true);
 	this->platform.setTexture(this->platformTexture);
@@ -116,7 +122,7 @@ void GameState::initPauseMenu()
 
 void GameState::initPlayers()
 {
-	this->player = new PlayerBox2D(this->world.get(), this->window->getSize().x / 2, this->window->getSize().y / 2, this->textures["PLAYER_SHEET"]);
+	this->player = new PlayerBox2D(this->world.get(), this->window->getSize().x / 2, this->window->getSize().y / 2, this->textures["PLAYER_SHEET"],8,10);
 }
 
 void GameState::initFonts()
@@ -160,6 +166,7 @@ GameState::GameState(sf::RenderWindow* window, std::map<std::string, int>* suppo
 
 	//setWall(-50, this->window->getSize().y / 2, 1, this->window->getSize().y / 2);
 	//setWall(this->window->getSize().x + 50, this->window->getSize().y / 2, 1, this->window->getSize().y / 2);
+	//setWall(this->window->getSize().x/2, this->window->getSize().y*2, this->window->getSize().x / 2, 10);
 
 	setPlatform(400, 600);
 
@@ -197,14 +204,14 @@ void GameState::updateEvents(sf::Event& event, const float& dt)
 	{
 		if (event.mouseWheel.delta == 1)
 		{
-
-			this->pixScale+=2;
+			if(pixScale<100)
+			this->pixScale+=1;
 
 		}
 		else if (event.mouseWheel.delta == -1)
 		{
-			if(pixScale>-8)
-			this->pixScale-=2;
+			if(pixScale>1)
+			this->pixScale-=1;
 		}
 		this->pixels->setScale(pixScale);
 	}
@@ -213,15 +220,19 @@ void GameState::updateEvents(sf::Event& event, const float& dt)
 
 	if (event.type == sf::Event::KeyPressed)
 	{
-		if (event.key.code == sf::Keyboard::Q)
+		if (event.key.code == sf::Keyboard::Num1)
 		{
-			if (pixType < PIX_SHIELD)
-				pixType++;
-			else
-				pixType = PIX_POINT;
-
+			pixType = 1;
 		}
-		if (event.key.code == sf::Keyboard::E)
+		if (event.key.code == sf::Keyboard::Num2)
+		{
+			pixType = 2;
+		}
+		if (event.key.code == sf::Keyboard::Num3)
+		{
+			pixType = 3;
+		}
+		if (event.key.code == sf::Keyboard::Q)
 		{
 			if (pixState < PIX_DYNAMIC)
 				pixState++;
@@ -231,13 +242,6 @@ void GameState::updateEvents(sf::Event& event, const float& dt)
 		if (event.key.code == sf::Keyboard::F)
 		{
 			this->player->getSprite()->setColor(sf::Color(distribution(generator), distribution(generator), distribution(generator)));
-		}
-		if (event.key.code == sf::Keyboard::Tab)
-		{
-			if (isWay)
-				isWay = false;
-			else
-				isWay = true;
 		}
 	}
 	if (event.type == sf::Event::MouseButtonReleased)
@@ -267,7 +271,7 @@ void GameState::updatePlayerInput(const float& dt)
 	{
 		this->player->move(0.f, -1.f, dt);
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds.at("MOVE_DOWN"))))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds.at("MOVE_DOWN"))) && this->getKeyTime())
 	{
 		this->player->move(0.f, 1.f, dt);
 	}
@@ -279,10 +283,10 @@ void GameState::updatePlayerInput(const float& dt)
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle) && this->getKeyTime())
 	{
-		if (popfront)
+		/*if (popfront)
 			popfront = 0;
 		else
-			popfront = 1;
+			popfront = 1;*/
 
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
@@ -321,8 +325,8 @@ void GameState::update(const float& dt)
 			}
 		}
 		this->pixels->update(dt, isWay, popfront, pixState, pixType);
-		this->background.setPosition(this->background.getPosition().x - 0.1* platformSpeed, this->background.getPosition().y);
-		this->background2.setPosition(this->background2.getPosition().x - 0.1*platformSpeed, this->background2.getPosition().y);
+		this->background.setPosition(this->background.getPosition().x - 0.1, this->background.getPosition().y);
+		this->background2.setPosition(this->background2.getPosition().x - 0.1, this->background2.getPosition().y);
 		if (background.getPosition().x + this->window->getSize().x - 1 < 0)
 		{
 			this->background.setPosition(this->window->getSize().x - 1, 0.f);
@@ -335,16 +339,28 @@ void GameState::update(const float& dt)
 		this->updatePlatforms();
 		this->player->update(dt);
 
-
-		//
-		if (this->player->getPosition().x  > this->window->getSize().x + 200 ||
-			this->player->getPosition().x  < 0 - 200 ||
-			this->player->getPosition().y > this->window->getSize().y + 200)
+		if (player->getPosition().y > window->getSize().y + 200)
 		{
-			this->endState();
-		}
-		//
+			int highScore = 0;
+			std::ifstream fin("Config/HighScore.ini");
+			fin >> highScore;
+			std::stringstream ss;
+			if (SCORE > highScore)
+			{
+				ss << "WINNER SCORE: " << SCORE;
+				this->pmenu->addText(200, ss.str());
+				std::ofstream fout("Config/HighScore.ini");
+				fout << SCORE;
+			}
+			else
+			{
+				ss << "LOSER SCORE: " << SCORE;
+				this->pmenu->addText(200, ss.str());
+			}
+			this->pauseState();
 
+
+		}
 	}
 	else //Paused update
 	{
@@ -370,7 +386,7 @@ void GameState::render(sf::RenderTarget* target)
 
 	if (!this->paused)
 	{
-
+		this->pixels->renderPixelHelper(target, mousePosView.x, mousePosView.y);
 		if (popfront) {
 			renderText("remove from end", 0, 0, 24, target);
 		}
@@ -387,12 +403,6 @@ void GameState::render(sf::RenderTarget* target)
 			break;
 		case PIX_BODY:
 			renderText("Body", 0, 20, 24, target);
-			break;
-		case PIX_SHIELD:
-			renderText("Shield", 0, 20, 24, target);
-			break;
-		case PIX_SWORD:
-			renderText("Sword", 0, 20, 24, target);
 			break;
 		}
 
@@ -417,6 +427,8 @@ void GameState::render(sf::RenderTarget* target)
 
 		renderText("SPEED: ", (this->window->getSize().x / 2) + 200, 0, 24, target);
 		renderNumbers(platformSpeed, (this->window->getSize().x / 2) + 270, 0, 24, target);
+
+		target->draw(this->helpSprite);
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
 		{
@@ -477,6 +489,7 @@ void GameState::renderPlatforms(sf::RenderTarget* target)
 			this->platforms[i] = NULL;
 			this->platforms.erase(this->platforms.begin() + i);
 			this->platformsColors.erase(this->platformsColors.begin() + i);
+			i--;
 		}
 	}
 }

@@ -146,8 +146,11 @@ void Game::run()
 {
 	while (this->window->isOpen())
 	{
-		this->updateDt();
-		this->update();
-		this->render();
+		//if (this->window->hasFocus())
+		//{
+			this->updateDt();
+			this->update();
+			this->render();
+		//}
 	}
 }

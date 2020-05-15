@@ -12,8 +12,10 @@ void PlayerBox2D::initComponents()
 }
 
 //Constructors / Destructors
-PlayerBox2D::PlayerBox2D(b2World* world,float x, float y, sf::Texture& texture_sheet)
+PlayerBox2D::PlayerBox2D(b2World* world,float x, float y, sf::Texture& texture_sheet, int countX, int countY)
 {
+	this->spriteSizeX = texture_sheet.getSize().x / countY;
+	this->spriteSizeY = texture_sheet.getSize().y / countX;
 	this->world = world;
 	this->initVariables();
 
@@ -23,9 +25,9 @@ PlayerBox2D::PlayerBox2D(b2World* world,float x, float y, sf::Texture& texture_s
 
 	this->createMovementComponent(300.f, 15.f, 5.f);
 	this->createAnimationComponent(texture_sheet);
-	this->sprite.setOrigin(43.f, 81.5f);
-	this->animationComponent->addAnimation("IDLE_RIGHT", 0.5f, 0, 0, 9, 0, 86, 163);
-	this->animationComponent->addAnimation("WALK_RIGHT", 0.5f, 0, 1, 9, 6, 86, 163);
+	this->sprite.setOrigin(this->spriteSizeX/2.f, this->spriteSizeY/2.f);
+	this->animationComponent->addAnimation("IDLE_RIGHT", 0.5f, 0, 0, 9, 0, this->spriteSizeX, this->spriteSizeY);
+	this->animationComponent->addAnimation("WALK_RIGHT", 0.5f, 0, 1, 9, 6, this->spriteSizeX, this->spriteSizeY);
 	this->createPhysicComponent();
 
 }
@@ -82,5 +84,10 @@ sf::Vector2f PlayerBox2D::getPosition()
 b2Body* PlayerBox2D::getBody()
 {
 	return this->physicComponent->getBody();
+}
+
+sf::Vector2f PlayerBox2D::getSize()
+{
+	return sf::Vector2f(this->spriteSizeX,this->spriteSizeY);
 }
 

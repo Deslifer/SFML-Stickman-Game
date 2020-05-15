@@ -7,7 +7,7 @@
 #include <map>
 
 enum PixelControl_States { PIX_KINETIC = 0, PIX_DYNAMIC };
-enum PixelControl_Types { PIX_POINT = 0, PIX_ROPE, PIX_BODY, PIX_SWORD, PIX_SHIELD };
+enum PixelControl_Types { PIX_POINT = 1, PIX_ROPE, PIX_BODY, PIX_SWORD, PIX_SHIELD,PIX_MOUSE, PIX_JOINT };
 
 class PixelControl
 {
@@ -22,21 +22,32 @@ private:
 	sf::Texture texture;
 	sf::Sprite sprite;
 	std::vector<Pixel*> pixels;
+
+	Pixel* bodyFirstJoint = NULL;
+	Pixel* bodySecondJoint = NULL;
+
+	b2Body* movedBody = NULL;
+	float mpX, mpY;
+	b2MouseJointDef mDef;
+	b2MouseJoint* mjoint=NULL;
+	
+
+	float originScale;
 	long firstpoint;
 	bool isWay, popfront;
 	int pixState, pixType;
+	int maxPixels;
 	float windowX,windowY;
-	const float SCALE = 30.f;
-	const float DEG = 57.29577f;
-	//bool popfront;
-	//bool isWay;
 
 public:
 	PixelControl(b2World* world,b2Body* player,float windowX,float windowY);
 	virtual ~PixelControl();
 	void newPixel(float x, float y);
 	void deletePixel();
+	void joint(float x, float y,bool firstJoint);
+	void mouseJoint(float x, float y, bool first, bool released, b2Body* ground);
 	void createBody();
+	void renderPixelHelper(sf::RenderTarget* target,float x,float y);
 	b2Body* figure();
 	void setScale(float scale);
 	void update(const float& dt, bool isWay, bool popfront, int pixState,int pixType);

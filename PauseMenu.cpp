@@ -29,9 +29,12 @@ PauseMenu::PauseMenu(sf::RenderWindow& window, sf::Font& font)
 	//Init text
 	this->menuText.setFont(font);
 	this->menuText.setFillColor(sf::Color(255, 255, 255, 200));
-	this->menuText.setCharacterSize(30.f);
+	this->menuText.setCharacterSize(60.f);
 	this->menuText.setString("PAUSED");
-	this->menuText.setPosition(this->container.getPosition());
+	this->menuText.setPosition(
+		this->container.getPosition().x+this->container.getSize().x/2.f-this->menuText.getGlobalBounds().width/2.f,
+		this->container.getPosition().y + 40.f
+	);
 
 }
 
@@ -71,6 +74,22 @@ void PauseMenu::addButton(const std::string key, float y, const std::string text
 
 }
 
+void PauseMenu::addText(float y, const std::string text)
+{
+	float width = 150.f;
+	float height = 50.f;
+	float x = this->container.getPosition().x + this->container.getSize().x / 2.f - width / 2.f;
+	
+	this->customText.setFont(font);
+	this->customText.setFillColor(sf::Color(255, 255, 255, 200));
+	this->customText.setCharacterSize(40.f);
+	this->customText.setString(text);
+	this->customText.setPosition(
+		this->container.getPosition().x + this->container.getSize().x / 2.f - this->customText.getGlobalBounds().width / 2.f,
+		this->container.getPosition().y + y
+	);
+}
+
 void PauseMenu::update(const sf::Vector2f& mousePos)
 {
 	for (auto& i : this->buttons)
@@ -85,6 +104,7 @@ void PauseMenu::render(sf::RenderTarget & target)
 	target.draw(container);
 
 	target.draw(this->menuText);
+	target.draw(this->customText);
 
 	for (auto &i : this->buttons)
 	{

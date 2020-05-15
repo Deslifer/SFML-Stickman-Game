@@ -20,12 +20,9 @@ protected:
 	sf::Sprite sprite;
 
 	//Variables
-	const float SCALE = 30.f;
-	const float DEG = 57.29577f;
 
 public:
 	Pixel(b2World* world, sf::Sprite sprite, float x, float y, b2BodyType type, float size);
-	Pixel(b2World* world, sf::Sprite sprite, float x, float y, b2BodyType type, float size,float dens);
 	virtual ~Pixel();
 	b2Body* getBody();
 	b2CircleShape getShape();

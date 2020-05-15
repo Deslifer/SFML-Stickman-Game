@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" InitialTargets="Box2D_init">
+  <PropertyGroup Label="Default initializers for properties">
+    <Linkage-Box2D Condition="'$(Linkage-Box2D)' == ''">dynamic</Linkage-Box2D>
+    <CallingConvention-Box2D Condition="'$(CallingConvention-Box2D)' == ''">cdecl</CallingConvention-Box2D>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)../..//build/native/include/;$(MSBuildThisFileDirectory)../..//build/native/include/\Box2D;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)../..//build/native/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="Win32 and Debug and Desktop" Condition="'$(Platform.ToLower())' == 'win32' And ( $(Configuration.ToLower().IndexOf('debug')) &gt; -1 ) And ( !('$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0') And !('$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0') And !('$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0') And !('$(TargetPlatformIdentifier.ToLower())' == 'windows phone' And '$(TargetPlatformVersion)' == '8.0') And !('$(AppContainerApplication.ToLower())' == 'true') )">
+    <Link>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\Debug\Desktop\Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="x64 and Debug and Desktop" Condition="'$(Platform.ToLower())' == 'x64' And ( $(Configuration.ToLower().IndexOf('debug')) &gt; -1 ) And ( !('$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0') And !('$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0') And !('$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0') And !('$(TargetPlatformIdentifier.ToLower())' == 'windows phone' And '$(TargetPlatformVersion)' == '8.0') And !('$(AppContainerApplication.ToLower())' == 'true') )">
+    <Link>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)../..//build/native/lib/x64\Debug\Desktop\Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="Win32 and Release and Desktop" Condition="'$(Platform.ToLower())' == 'win32' And ( $(Configuration.ToLower().IndexOf('debug')) == -1 ) And ( !('$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0') And !('$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0') And !('$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0') And !('$(TargetPlatformIdentifier.ToLower())' == 'windows phone' And '$(TargetPlatformVersion)' == '8.0') And !('$(AppContainerApplication.ToLower())' == 'true') )">
+    <Link>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\Release\Desktop\Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="x64 and Release and Desktop" Condition="'$(Platform.ToLower())' == 'x64' And ( $(Configuration.ToLower().IndexOf('debug')) == -1 ) And ( !('$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0') And !('$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0') And !('$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0') And !('$(TargetPlatformIdentifier.ToLower())' == 'windows phone' And '$(TargetPlatformVersion)' == '8.0') And !('$(AppContainerApplication.ToLower())' == 'true') )">
+    <Link>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)../..//build/native/lib/x64\Release\Desktop\Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup Label="Win32 and Debug and Desktop" Condition="'$(Platform.ToLower())' == 'win32' And ( $(Configuration.ToLower().IndexOf('debug')) &gt; -1 ) And ( !('$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0') And !('$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0') And !('$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0') And !('$(TargetPlatformIdentifier.ToLower())' == 'windows phone' And '$(TargetPlatformVersion)' == '8.0') And !('$(AppContainerApplication.ToLower())' == 'true') )">
+    <None Include="$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\Debug\Desktop\Box2D.pdb" Condition="(('$(AppContainerApplication.ToLower())' == 'true')) OR (('$(TargetPlatformIdentifier.ToLower())' == 'windows phone' And '$(TargetPlatformVersion)' == '8.0'))">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+  </ItemGroup>
+  <ItemGroup Label="x64 and Debug and Desktop" Condition="'$(Platform.ToLower())' == 'x64' And ( $(Configuration.ToLower().IndexOf('debug')) &gt; -1 ) And ( !('$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0') And !('$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0') And !('$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0') And !('$(TargetPlatformIdentifier.ToLower())' == 'windows phone' And '$(TargetPlatformVersion)' == '8.0') And !('$(AppContainerApplication.ToLower())' == 'true') )">
+    <None Include="$(MSBuildThisFileDirectory)../..//build/native/lib/x64\Debug\Desktop\Box2D.pdb" Condition="(('$(AppContainerApplication.ToLower())' == 'true')) OR (('$(TargetPlatformIdentifier.ToLower())' == 'windows phone' And '$(TargetPlatformVersion)' == '8.0'))">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+  </ItemGroup>
+  <ItemGroup Label="Win32 and Release and Desktop" Condition="'$(Platform.ToLower())' == 'win32' And ( $(Configuration.ToLower().IndexOf('debug')) == -1 ) And ( !('$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0') And !('$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0') And !('$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0') And !('$(TargetPlatformIdentifier.ToLower())' == 'windows phone' And '$(TargetPlatformVersion)' == '8.0') And !('$(AppContainerApplication.ToLower())' == 'true') )">
+    <None Include="$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\Release\Desktop\Box2D.pdb" Condition="(('$(AppContainerApplication.ToLower())' == 'true')) OR (('$(TargetPlatformIdentifier.ToLower())' == 'windows phone' And '$(TargetPlatformVersion)' == '8.0'))">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+  </ItemGroup>
+  <ItemGroup Label="x64 and Release and Desktop" Condition="'$(Platform.ToLower())' == 'x64' And ( $(Configuration.ToLower().IndexOf('debug')) == -1 ) And ( !('$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0') And !('$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0') And !('$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0') And !('$(TargetPlatformIdentifier.ToLower())' == 'windows phone' And '$(TargetPlatformVersion)' == '8.0') And !('$(AppContainerApplication.ToLower())' == 'true') )">
+    <None Include="$(MSBuildThisFileDirectory)../..//build/native/lib/x64\Release\Desktop\Box2D.pdb" Condition="(('$(AppContainerApplication.ToLower())' == 'true')) OR (('$(TargetPlatformIdentifier.ToLower())' == 'windows phone' And '$(TargetPlatformVersion)' == '8.0'))">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\default-propertiesui.xml" />
+  </ItemGroup>
+  <Target Name="Box2D_AfterBuild" AfterTargets="AfterBuild" />
+  <Target Name="Box2D_AfterBuild_Win32_and_Debug_and_Desktop" Label="Win32 and Debug and Desktop" Condition="'$(Platform.ToLower())' == 'win32' And ( $(Configuration.ToLower().IndexOf('debug')) &gt; -1 ) And ( !('$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0') And !('$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0') And !('$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0') And !('$(TargetPlatformIdentifier.ToLower())' == 'windows phone' And '$(TargetPlatformVersion)' == '8.0') And !('$(AppContainerApplication.ToLower())' == 'true') )" AfterTargets="Box2D_AfterBuild">
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\Debug\Desktop\Box2D.pdb" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
+  </Target>
+  <Target Name="Box2D_AfterBuild_x64_and_Debug_and_Desktop" Label="x64 and Debug and Desktop" Condition="'$(Platform.ToLower())' == 'x64' And ( $(Configuration.ToLower().IndexOf('debug')) &gt; -1 ) And ( !('$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0') And !('$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0') And !('$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0') And !('$(TargetPlatformIdentifier.ToLower())' == 'windows phone' And '$(TargetPlatformVersion)' == '8.0') And !('$(AppContainerApplication.ToLower())' == 'true') )" AfterTargets="Box2D_AfterBuild">
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/lib/x64\Debug\Desktop\Box2D.pdb" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
+  </Target>
+  <Target Name="Box2D_AfterBuild_Win32_and_Release_and_Desktop" Label="Win32 and Release and Desktop" Condition="'$(Platform.ToLower())' == 'win32' And ( $(Configuration.ToLower().IndexOf('debug')) == -1 ) And ( !('$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0') And !('$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0') And !('$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0') And !('$(TargetPlatformIdentifier.ToLower())' == 'windows phone' And '$(TargetPlatformVersion)' == '8.0') And !('$(AppContainerApplication.ToLower())' == 'true') )" AfterTargets="Box2D_AfterBuild">
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\Release\Desktop\Box2D.pdb" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
+  </Target>
+  <Target Name="Box2D_AfterBuild_x64_and_Release_and_Desktop" Label="x64 and Release and Desktop" Condition="'$(Platform.ToLower())' == 'x64' And ( $(Configuration.ToLower().IndexOf('debug')) == -1 ) And ( !('$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0') And !('$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0') And !('$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0') And !('$(TargetPlatformIdentifier.ToLower())' == 'windows phone' And '$(TargetPlatformVersion)' == '8.0') And !('$(AppContainerApplication.ToLower())' == 'true') )" AfterTargets="Box2D_AfterBuild">
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)../..//build/native/lib/x64\Release\Desktop\Box2D.pdb" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
+  </Target>
+  <UsingTask TaskName="Box2D_Contains" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" TaskFactory="CodeTaskFactory">
+    <ParameterGroup>
+      <Text Output="false" ParameterType="System.String" />
+      <Library Output="false" Required="true" ParameterType="System.String" />
+      <Value Output="false" Required="true" ParameterType="System.String" />
+      <Result Output="true" ParameterType="System.String" />
+    </ParameterGroup>
+    <Task>
+      <Code>Result = ((Text ?? "").Split(';').Contains(Library) ) ? Value : String.Empty;</Code>
+    </Task>
+  </UsingTask>
+  <Target Name="Box2D_init">
+    <Box2D_Contains Text="Linkage-dynamic" Library="Box2D" Value="dynamic" Condition="'$(Linkage-Box2D)'==''">
+      <Output TaskParameter="Result" PropertyName="Linkage-Box2D" />
+    </Box2D_Contains>
+    <Box2D_Contains Text="Linkage-static" Library="Box2D" Value="static" Condition="'$(Linkage-Box2D)'==''">
+      <Output TaskParameter="Result" PropertyName="Linkage-Box2D" />
+    </Box2D_Contains>
+    <Box2D_Contains Text="Linkage-ltcg" Library="Box2D" Value="ltcg" Condition="'$(Linkage-Box2D)'==''">
+      <Output TaskParameter="Result" PropertyName="Linkage-Box2D" />
+    </Box2D_Contains>
+    <Box2D_Contains Text="Linkage-sxs" Library="Box2D" Value="sxs" Condition="'$(Linkage-Box2D)'==''">
+      <Output TaskParameter="Result" PropertyName="Linkage-Box2D" />
+    </Box2D_Contains>
+    <Box2D_Contains Text="CallingConvention-cdecl" Library="Box2D" Value="cdecl" Condition="'$(CallingConvention-Box2D)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-Box2D" />
+    </Box2D_Contains>
+    <Box2D_Contains Text="CallingConvention-stdcall" Library="Box2D" Value="stdcall" Condition="'$(CallingConvention-Box2D)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-Box2D" />
+    </Box2D_Contains>
+    <Box2D_Contains Text="CallingConvention-fastcall" Library="Box2D" Value="fastcall" Condition="'$(CallingConvention-Box2D)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-Box2D" />
+    </Box2D_Contains>
+    <Box2D_Contains Text="CallingConvention-thiscall" Library="Box2D" Value="thiscall" Condition="'$(CallingConvention-Box2D)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-Box2D" />
+    </Box2D_Contains>
+    <Box2D_Contains Text="CallingConvention-clrcall" Library="Box2D" Value="clrcall" Condition="'$(CallingConvention-Box2D)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-Box2D" />
+    </Box2D_Contains>
+  </Target>
+</Project>

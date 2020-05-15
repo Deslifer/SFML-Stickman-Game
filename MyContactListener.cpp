@@ -49,7 +49,7 @@ void MyContactListener::PreSolve(b2Contact* contact, const b2Manifold* oldManifo
 
 	if (otherBody->GetUserData() == (void*)"player")
 	{
-		if (otherBody->GetPosition().y + (163 / 2) / 30.f < platformBody->GetPosition().y-3.f/30.f)
+		if (otherBody->GetPosition().y + (163 / 2) / SCALE < platformBody->GetPosition().y-3.f/ SCALE)
 		{
 			return;
 		}

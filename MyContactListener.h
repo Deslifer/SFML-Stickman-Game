@@ -1,6 +1,7 @@
 #pragma once
 #include "box2d/box2d.h"
 #include <iostream>
+#include "PhysicComponent.h"
 
 class MyContactListener :
 	public b2ContactListener

@@ -30,6 +30,9 @@ static short MASK_PLATFORM = CATEGORY_PLAYER|CATEGORY_BODY;
 static short MASK_PIXEL = CATEGORY_PLAYER | CATEGORY_BODY| CATEGORY_PLATFORM;
 static short MASK_NOT_BODY = 0;
 
+const float SCALE = 30.f;
+const float DEG = 57.29577f;
+
 class PhysicComponent
 {
 private:
@@ -40,8 +43,6 @@ private:
 	b2PolygonShape shape;
 	b2BodyDef bdef;
 	b2Body* body = nullptr;
-	const float SCALE = 30.f;
-	const float DEG = 57.29577f;
 
 public:
 	PhysicComponent(b2World* world, sf::Sprite& sprite);

@@ -54,9 +54,6 @@
     <ClCompile Include="AnimationComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="EditorState.cpp">
-      <Filter>States</Filter>
-    </ClCompile>
     <ClCompile Include="PhysicComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -96,6 +93,9 @@
     <ClCompile Include="PixelBody.cpp">
       <Filter>Pixels</Filter>
     </ClCompile>
+    <ClCompile Include="SandboxState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -118,12 +118,6 @@
     </ClInclude>
     <ClInclude Include="AnimationComponent.h">
       <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="EditorState.h">
-      <Filter>States</Filter>
     </ClInclude>
     <ClInclude Include="PhysicComponent.h">
       <Filter>Components</Filter>
@@ -164,6 +158,9 @@
     <ClInclude Include="PixelBody.h">
       <Filter>Pixels</Filter>
     </ClInclude>
+    <ClInclude Include="SandboxState.h">
+      <Filter>States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Config\SupportedKeys.ini">
@@ -181,5 +178,12 @@
     <None Include="Config\EditorStateKeyBinds.ini">
       <Filter>Файлы ресурсов</Filter>
     </None>
+    <None Include="Config\SandboxStateKeyBinds.ini">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
+    <None Include="Config\HighScore.ini">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

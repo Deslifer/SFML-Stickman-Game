@@ -3,14 +3,16 @@
 PixelControl::PixelControl(b2World* world, b2Body* player, float windowX, float windowY)
 	:world(world), player(player), windowX(windowX), windowY(windowY)
 {
+	originScale = 0.01;
+	maxPixels = 10;
 	firstpoint = 0;
 	pixState = 0;
 	pixType = 0;
 	popfront = 1;
 	isWay = 0;
-	this->texture.loadFromFile("Sprites/circle.png");
-	//this->texture.setSmooth(true);
+	this->texture.loadFromFile("Sprites/circleBig.png");
 	this->sprite.setTexture(this->texture);
+	this->sprite.setScale(originScale, originScale);
 	this->sprite.setOrigin(this->texture.getSize().x / 2, this->texture.getSize().y / 2);
 }
 
@@ -48,20 +50,19 @@ void PixelControl::newPixel(float x, float y)
 		}
 		else if(pixState == PIX_KINETIC || pixType == PIX_BODY)
 		{
-			type = b2_staticBody;
+			type = b2_kinematicBody;
 		}
 		
 		if (pixType == PIX_ROPE && pixels.size() > 0)
-			pixels.push_back(new PixelRope(this->world,this->sprite, x, y, type, this->texture.getSize().x * this->sprite.getScale().x, pixels.back()->getBody()));
+			pixels.push_back(new PixelRope(this->world,this->sprite, x, y, type, this->texture.getSize().x * this->sprite.getScale().x, pixels.back()->getBody(),pixels.back()->getSize(), originScale));
 		else if (pixType == PIX_BODY && pixState == PIX_DYNAMIC && this->pixels.size() > firstpoint)
-			pixels.push_back(new PixelBody(this->world,this->sprite, x, y, type, this->texture.getSize().x * this->sprite.getScale().x, pixels.back()->getBody()));
+			pixels.push_back(new PixelBody(this->world,this->sprite, x, y, type, this->texture.getSize().x * this->sprite.getScale().x, pixels.back()->getBody(), originScale));
 		else if (pixType == PIX_SHIELD && pixState == PIX_DYNAMIC)
-			pixels.push_back(new PixelShield(this->world, this->sprite, x, y, type, this->texture.getSize().x*this->sprite.getScale().x, this->player));
+			pixels.push_back(new PixelShield(this->world, this->sprite, x, y, type, this->texture.getSize().x*this->sprite.getScale().x, this->player, originScale));
 		else if (pixType == PIX_SWORD && pixState == PIX_DYNAMIC)
-			pixels.push_back(new PixelSword(this->world, this->sprite, x, y, type, this->texture.getSize().x * this->sprite.getScale().x, this->player));
+			pixels.push_back(new PixelSword(this->world, this->sprite, x, y, type, this->texture.getSize().x * this->sprite.getScale().x, this->player, originScale));
 		else
-			pixels.push_back(new PixelPoint(this->world, this->sprite, x, y, type, this->texture.getSize().x * this->sprite.getScale().x));
-		
+			pixels.push_back(new PixelPoint(this->world, this->sprite, x, y, type, this->texture.getSize().x * this->sprite.getScale().x, originScale));
 	}
 }
 
@@ -124,6 +125,90 @@ void PixelControl::deletePixel()
 	}
 }
 
+void PixelControl::joint(float x, float y, bool firstJoint)
+{
+	bool joint = 0;
+	b2Vec2 pos = b2Vec2(x / SCALE, y / SCALE);
+	for (int i = 0; i < this->pixels.size(); i++) {
+		for (b2Fixture* f = pixels[i]->getBody()->GetFixtureList(); f != 0; f = f->GetNext()) {
+			if (f->TestPoint(pos) && f->GetUserData()!= (void*)"pixelAura") {
+				if (firstJoint)
+					bodyFirstJoint = pixels[i];
+				else
+				{
+					bodySecondJoint = pixels[i];
+					joint = 1;
+				}
+				break;
+			}
+		}
+	}
+	if (joint && (bodyFirstJoint!= bodySecondJoint) && bodyFirstJoint->getBody()->GetWorld()==this->world&& bodySecondJoint->getBody()->GetWorld() == this->world) {
+		b2RopeJointDef rDef;
+		rDef.bodyA = bodyFirstJoint->getBody();
+		rDef.bodyB = bodySecondJoint->getBody();
+		rDef.collideConnected = true;
+		if(bodySecondJoint->getSize()>bodyFirstJoint->getSize())
+			rDef.maxLength = bodySecondJoint->getSize() / 2 / SCALE;
+		else
+			rDef.maxLength = bodyFirstJoint->getSize() / 2 / SCALE;
+		rDef.localAnchorA.Set(0, -1 / SCALE);
+		rDef.localAnchorB.Set(0, 1 / SCALE);
+		//rDef.localAnchorB.Set((-rDef.bodyB->GetPosition().x+pos.x)/2, (-rDef.bodyB->GetPosition().y+pos.y)/2);
+		world->CreateJoint(&rDef);
+	}
+}
+
+void PixelControl::mouseJoint(float x, float y, bool first,bool released,b2Body* ground)
+{
+	if (released)
+	{
+		if (mjoint != NULL &&movedBody!=NULL && movedBody->GetWorld() == this->world)
+		{
+			this->world->DestroyJoint(mjoint);
+			mjoint = NULL;
+			movedBody = NULL;
+		}
+	}
+	else
+	{
+		b2Vec2 pos = b2Vec2(x / SCALE, y / SCALE);
+		if (first)
+		{
+			bool joint = 0;
+			for (int i = 0; i < this->pixels.size(); i++) {
+				for (b2Fixture* f = pixels[i]->getBody()->GetFixtureList(); f != 0; f = f->GetNext()) {
+					if (f->TestPoint(pos) && f->GetUserData() != (void*)"pixelAura") {
+
+						movedBody = pixels[i]->getBody();
+						joint = 1;
+						break;
+					}
+				}
+			}
+			if (joint )
+			{
+				if (movedBody->GetWorld() == this->world)
+				{
+					mDef.bodyA = ground;
+					mDef.bodyB = movedBody;
+					mDef.target.Set(x / SCALE, y / SCALE);
+					mDef.collideConnected = true;
+					mDef.maxForce = 10000.f * movedBody->GetMass();
+					mDef.frequencyHz = 5;
+					mDef.dampingRatio = 0.9;
+					mjoint = (b2MouseJoint*)this->world->CreateJoint(&mDef);
+				}
+			}
+		}
+		else
+		{
+			if(mjoint!=NULL && movedBody->GetWorld() == this->world)
+				mjoint->SetTarget(pos);
+		}
+	}
+}
+
 void PixelControl::createBody()
 {
 	float centerX = 0, centerY = 0, count = 0;;
@@ -151,6 +236,14 @@ void PixelControl::createBody()
 		this->pixels.back()->getBody()->SetType(b2_dynamicBody);
 		firstpoint++;
 	}
+}
+
+void PixelControl::renderPixelHelper(sf::RenderTarget* target,float x, float y)
+{
+
+	sprite.setColor(sf::Color(0, 0, 0, 100));
+	sprite.setPosition(x, y);
+	target->draw(sprite);
 }
 
 b2Body* PixelControl::figure()
@@ -192,12 +285,13 @@ b2Body* PixelControl::figure()
 
 void PixelControl::setScale(float scale)
 {
-	this->sprite.setScale((texture.getSize().x + scale) / texture.getSize().x, (texture.getSize().x + scale) / texture.getSize().x);
+	this->sprite.setScale(originScale*scale, originScale * scale);
 }
 
 void PixelControl::update(const float& dt, bool isWay, bool popfront, int pixState, int pixType)
 {
 	//std::cout << this->world->GetBodyCount()<<std::endl;
+	//std::cout << this->pixels.size() << std::endl;
 	//std::cout << this->newFixtures.size() << std::endl;
 	//std::cout << this->newBodies.size() << std::endl;
 	if (firstpoint < 0)
@@ -207,7 +301,7 @@ void PixelControl::update(const float& dt, bool isWay, bool popfront, int pixSta
 	this->pixState = pixState;
 	this->pixType = pixType;
 
-	if (dt > 0.01 || (this->isWay && pixels.size() > 30))
+	if (/*dt > 0.012  ||*/ (this->isWay && pixels.size() > 30))
 	{
 		this->deletePixel();
 
@@ -249,6 +343,7 @@ void PixelControl::render(sf::RenderTarget* target)
 					}
 				}
 			}
+			i--;
 		}
 	}
 

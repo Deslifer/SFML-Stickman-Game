@@ -59,9 +59,9 @@ void MainMenuState::initButtons()
 		sf::Color(70, 70, 70, 200), sf::Color(150, 150, 150, 250), sf::Color(20, 20, 20, 50),
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 	
-	this->buttons["EDITOR_STATE"] = new Button(
+	this->buttons["SANDBOX_STATE"] = new Button(
 		100, 300, 150, 50,
-		&this->font, "Editor", 50,
+		&this->font, "Sandbox", 50,
 		sf::Color(70, 70, 70, 200), sf::Color(150, 150, 150, 250), sf::Color(20, 20, 20, 50),
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 	
@@ -110,9 +110,9 @@ void MainMenuState::updateButtons()
 		this->states->push(new SettingState(this->window, this->supportedKeys, this->states));
 	}
 	//Editor
-	if (this->buttons["EDITOR_STATE"]->isPressed())
+	if (this->buttons["SANDBOX_STATE"]->isPressed())
 	{
-		//this->states->push(new EditorState());
+		this->states->push(new SandboxState(this->window, this->supportedKeys, this->states));
 	}
 	//Quit
 	if (this->buttons["EXIT_STATE"]->isPressed())

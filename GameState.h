@@ -18,6 +18,9 @@ private:
 	PlayerBox2D* player;
 	sf::Font font;
 
+	sf::Texture helpTexture;
+	sf::Sprite helpSprite;
+
 	sf::Texture backgroundTexture;
 	sf::RectangleShape background;
 	sf::Texture backgroundTexture2;
@@ -29,9 +32,6 @@ private:
 	sf::Texture platformTexture;
 	sf::Sprite platform;
 
-	const float SCALE = 30.f;
-	const float DEG = 57.29577f;
-
 	std::unique_ptr<b2World> world;
 
 	std::vector<b2Body*> platforms;
@@ -42,6 +42,8 @@ private:
 	float platformSpeed;
 	int SCORE;
 	int nextSCORE;
+
+	bool firstJoint;
 
 	int pixScale;
 	int pixState;

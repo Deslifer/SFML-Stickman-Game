@@ -11,13 +11,12 @@ private:
 	//Initialazer functions;
 	void initVariables();
 	void initComponents();
-	const float SCALE = 30.f;
-	const float DEG = 57.29577f;
+
 	
 
 
 public:
-	PlayerBox2D(b2World* world,float x, float y, sf::Texture& texture_sheet);
+	PlayerBox2D(b2World* world,float x, float y, sf::Texture& texture_sheet,int countX, int countY );
 	virtual ~PlayerBox2D();
 
 	//Functions
@@ -25,4 +24,5 @@ public:
 	sf::Sprite* getSprite();
 	sf::Vector2f getPosition();
 	b2Body* getBody();
+	sf::Vector2f getSize();
 };

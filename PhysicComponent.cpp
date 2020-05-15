@@ -22,7 +22,7 @@ PhysicComponent::PhysicComponent(
 
 	b2Fixture* bfix;
 	this->shape.SetAsBox((9 * 0.5f - b2_polygonRadius) / SCALE, 30 / SCALE);
-	bfix = this->body->CreateFixture(&shape, 50);
+	bfix = this->body->CreateFixture(&shape, 6);
 	bfix->SetFilterData(f);
 	bfix->SetUserData((void*)"body");
 
@@ -31,13 +31,13 @@ PhysicComponent::PhysicComponent(
 	circle.m_p.Set(0,(55.5)/SCALE);
 
 	this->body->SetFixedRotation(true);
-	bfix = this->body->CreateFixture(&circle, 1);
+	bfix = this->body->CreateFixture(&circle, 6);
 	bfix->SetFilterData(f);
 	bfix->SetUserData((void*)"legs");
 
 	circle.m_radius = (31.5 - b2_polygonRadius) / SCALE;
 	circle.m_p.Set(0, (-45.5) / SCALE);
-	bfix = this->body->CreateFixture(&circle, 1);
+	bfix = this->body->CreateFixture(&circle, 6);
 	bfix->SetFilterData(f);
 	bfix->SetUserData((void*)"head");
 

@@ -6,6 +6,8 @@ class State
 private:
 
 protected:
+	AudioComponent* audioComponent;
+
 	std::stack<State*>* states;
 	sf::RenderWindow* window;
 	std::map<std::string, int>* supportedKeys;

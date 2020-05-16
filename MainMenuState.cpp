@@ -81,6 +81,9 @@ MainMenuState::MainMenuState(sf::RenderWindow* window, std::map<std::string, int
 	this->initFonts();
 	this->initKeybinds();
 	this->initButtons();
+
+	this->audioComponent = new AudioComponent();
+	this->audioComponent->addMusic("MUSIC", "Audio/bensound-adventure.ogg");
 }
 
 MainMenuState::~MainMenuState()
@@ -90,6 +93,7 @@ MainMenuState::~MainMenuState()
 	{
 		delete it->second;
 	}
+	delete this->audioComponent;
 }
 
 void MainMenuState::updateButtons()
@@ -135,6 +139,14 @@ void MainMenuState::update(const float& dt)
 	this->updateInput(dt);
 
 	this->updateButtons();
+	if (states->size() > 0 && states->top() == this)
+	{
+		audioComponent->playMusic("MUSIC");
+	}
+	else
+	{
+		audioComponent->stopMusic("MUSIC");
+	}
 
 }
 

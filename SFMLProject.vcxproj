@@ -135,6 +135,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationComponent.cpp" />
+    <ClCompile Include="AudioComponent.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="SandboxState.cpp" />
     <ClCompile Include="EntityBox2D.cpp" />
@@ -159,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationComponent.h" />
+    <ClInclude Include="AudioComponent.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="SandboxState.h" />
     <ClInclude Include="EntityBox2D.h" />

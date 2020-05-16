@@ -4,14 +4,14 @@ PixelControl::PixelControl(b2World* world, b2Body* player, float windowX, float 
 	:world(world), player(player), windowX(windowX), windowY(windowY),withMaxPixels(withMaxPixels)
 {
 	originScale = 0.01;
-	maxPixels = 30;
+	maxPixels = 20;
 	maxTimer = 2;
 	firstpoint = 0;
 	pixState = 0;
 	pixType = 0;
 	popfront = 1;
 	isWay = 0;
-	if (!this->font.loadFromFile("Fonts/THANK YOU KOBE.ttf"))
+	if (!this->font.loadFromFile("Fonts/domcasual-normal1.ttf"))
 	{
 		throw("ERROR::GameState::COULD NOT LOAD FONT");
 	}
@@ -74,7 +74,7 @@ void PixelControl::newPixel(float x, float y)
 		else
 			pixels.push_back(new PixelPoint(this->world, this->sprite, x, y, type, this->texture.getSize().x * this->sprite.getScale().x, originScale));
 		if(withMaxPixels)
-			pixelsTimer.push_back(maxTimer);
+			pixelsTimer.push_back(maxTimer+ sprite.getScale().x / originScale);
 
 	}
 }
@@ -387,17 +387,17 @@ void PixelControl::render(sf::RenderTarget* target)
 			sf::Text timerText;
 			timerText.setFont(this->font);
 			timerText.setFillColor(sf::Color::Black);
+			std::stringstream ss;
+			ss << (int)pixelsTimer[i] + 1;
+			timerText.setString(ss.str());
 			timerText.setCharacterSize(pixels[i]->getSize());
-			timerText.setOrigin(pixels[i]->getSize()/4.5, pixels[i]->getSize()/1.5);
+			sf::FloatRect textRect = timerText.getLocalBounds();
+			timerText.setOrigin(textRect.left + textRect.width / 2.0f,
+				textRect.top + textRect.height / 2.0f);
 			timerText.setPosition(
 				this->pixels[i]->getBody()->GetPosition().x * SCALE,
 				this->pixels[i]->getBody()->GetPosition().y * SCALE
 			);
-
-
-			std::stringstream ss;
-			ss << (int)pixelsTimer[i]+1;
-			timerText.setString(ss.str());
 			target->draw(timerText);
 
 		}

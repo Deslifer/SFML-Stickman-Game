@@ -27,6 +27,7 @@ public:
 	b2Body* getBody();
 	b2CircleShape getShape();
 	b2Fixture* getFixture();
+	sf::Sprite getSprite();
 	float getSize();
 	virtual void update(const float& dt);
 	virtual void render(sf::RenderTarget* target);

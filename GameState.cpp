@@ -162,11 +162,11 @@ GameState::GameState(sf::RenderWindow* window, std::map<std::string, int>* suppo
 	this->initPlayers();
 	this->initKeybinds();
 
-	pixels = new PixelControl(this->world.get(),this->player->getBody(),this->window->getSize().x, this->window->getSize().y,1);
+	this->audioComponent = new AudioComponent();
+	this->audioComponent->addMusic("MUSIC", "Audio/bensound-funkyelement.ogg");
+	this->audioComponent->addSound("FALL_SOUND", "Audio/goofy-yell.ogg");
 
-	//setWall(-50, this->window->getSize().y / 2, 1, this->window->getSize().y / 2);
-	//setWall(this->window->getSize().x + 50, this->window->getSize().y / 2, 1, this->window->getSize().y / 2);
-	//setWall(this->window->getSize().x/2, this->window->getSize().y*2, this->window->getSize().x / 2, 10);
+	pixels = new PixelControl(this->world.get(),this->player->getBody(),this->window->getSize().x, this->window->getSize().y,1);
 
 	setPlatform(400, 600);
 
@@ -176,7 +176,7 @@ GameState::GameState(sf::RenderWindow* window, std::map<std::string, int>* suppo
 GameState::~GameState()
 {
 	delete this->pmenu;
-
+	delete this->audioComponent;
 }
 
 void GameState::updatePauseMenuButtons()
@@ -299,6 +299,16 @@ void GameState::updatePlayerInput(const float& dt)
 
 void GameState::update(const float& dt)
 {
+
+	if (states->size() > 0 && states->top() == this)
+	{
+		audioComponent->playMusic("MUSIC");
+	}
+	else
+	{
+		audioComponent->stopMusic("MUSIC");
+	}
+
 	this->updateMousePositions();
 	this->updateKeyTime(dt);
 	this->updateInput(dt);
@@ -307,7 +317,7 @@ void GameState::update(const float& dt)
 	{
 		world->Step(1.0f / 60.0f, 6, 2);
 		time += dt;
-		if (time > 2)
+		if (time > 3)
 		{
 			SCORE++;
 			this->pixels->addPixel();
@@ -342,6 +352,7 @@ void GameState::update(const float& dt)
 
 		if (player->getPosition().y > window->getSize().y + 200)
 		{
+			this->audioComponent->playSound("FALL_SOUND");
 			int highScore = 0;
 			std::ifstream fin("Config/HighScore.ini");
 			fin >> highScore;

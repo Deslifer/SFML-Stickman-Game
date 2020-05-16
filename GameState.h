@@ -12,6 +12,7 @@ class GameState :
 	public State, public b2ContactListener
 {
 private:
+
 	PauseMenu* pmenu;
 	PixelControl* pixels;
 	//Variables

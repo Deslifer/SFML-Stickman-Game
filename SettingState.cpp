@@ -63,6 +63,7 @@ SettingState::SettingState(sf::RenderWindow* window, std::map<std::string, int>*
 	this->initFonts();
 	this->initKeybinds();
 	this->initButtons();
+
 }
 
 SettingState::~SettingState()

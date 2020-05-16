@@ -29,6 +29,9 @@ PlayerBox2D::PlayerBox2D(b2World* world,float x, float y, sf::Texture& texture_s
 	this->animationComponent->addAnimation("IDLE_RIGHT", 0.5f, 0, 0, 9, 0, this->spriteSizeX, this->spriteSizeY);
 	this->animationComponent->addAnimation("WALK_RIGHT", 0.5f, 0, 1, 9, 6, this->spriteSizeX, this->spriteSizeY);
 	this->createPhysicComponent();
+	this->createAudioComponent();
+	this->audioComponent->addSound("JUMP_SOUND", "Audio/jump.ogg");
+	
 
 }
 
@@ -63,6 +66,11 @@ void PlayerBox2D::update(const float& dt)
 	else if (this->movementComponent->getState(MOVING_DOWN))
 	{
 		this->animationComponent->play("IDLE_RIGHT", dt);
+	}
+	if (this->movementComponent->getState(MOVING_UP))
+	{
+		if (this->physicComponent->onGround())
+			this->audioComponent->playSound("JUMP_SOUND");
 	}
 
 

@@ -3,6 +3,7 @@
 #include "MovementComponent.h"
 #include "AnimationComponent.h"
 #include "PhysicComponent.h"
+#include "AudioComponent.h"
 
 class EntityBox2D
 {
@@ -18,6 +19,7 @@ protected:
 	MovementComponent* movementComponent;
 	AnimationComponent* animationComponent;
 	PhysicComponent* physicComponent;
+	AudioComponent* audioComponent;
 	b2World* world = nullptr;
 
 public:
@@ -28,6 +30,7 @@ public:
 	void createMovementComponent(const float maxVelocity, const float acceleration, const float deceleration);
 	void createAnimationComponent(sf::Texture& texture_sheet);
 	void createPhysicComponent();
+	void createAudioComponent();
 	//Functions
 
 	virtual void setPosition(const float x, const float y);

@@ -5,6 +5,7 @@ void EntityBox2D::initVariables()
 	this->movementComponent = NULL;
 	this->animationComponent = NULL;
 	this->physicComponent = NULL;
+	this->audioComponent = NULL;
 }
 
 EntityBox2D::EntityBox2D()
@@ -17,6 +18,7 @@ EntityBox2D::~EntityBox2D()
 	delete this->movementComponent;
 	delete this->animationComponent;
 	delete this->physicComponent;
+	delete this->audioComponent;
 }
 
 //Component functions
@@ -38,6 +40,11 @@ void EntityBox2D::createAnimationComponent(sf::Texture& texture_sheet)
 void EntityBox2D::createPhysicComponent()
 {
 	this->physicComponent = new PhysicComponent(this->world,this->sprite);
+}
+
+void EntityBox2D::createAudioComponent()
+{
+	this->audioComponent = new AudioComponent();
 }
 
 //Functions

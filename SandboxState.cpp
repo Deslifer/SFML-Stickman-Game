@@ -116,6 +116,9 @@ SandboxState::SandboxState(sf::RenderWindow* window, std::map<std::string, int>*
 	this->initPlayers();
 	this->initKeybinds();
 
+	this->audioComponent = new AudioComponent();
+	this->audioComponent->addMusic("MUSIC", "Audio/bensound-buddy.ogg");
+
 	pixels = new PixelControl(this->world.get(), this->player->getBody(), this->window->getSize().x, this->window->getSize().y,0);
 	//setWall(-50, this->window->getSize().y / 2, 1, this->window->getSize().y / 2);
 	//setWall(this->window->getSize().x + 50, this->window->getSize().y / 2, 1, this->window->getSize().y / 2);
@@ -125,6 +128,7 @@ SandboxState::SandboxState(sf::RenderWindow* window, std::map<std::string, int>*
 SandboxState::~SandboxState()
 {
 	delete this->pmenu;
+	delete this->audioComponent;
 
 }
 
@@ -295,6 +299,16 @@ void SandboxState::updatePlayerInput(const float& dt)
 
 void SandboxState::update(const float& dt)
 {
+
+	if (states->size() > 0 && states->top() == this)
+	{
+		audioComponent->playMusic("MUSIC");
+	}
+	else
+	{
+		audioComponent->stopMusic("MUSIC");
+	}
+
 	this->updateMousePositions();
 	this->updateKeyTime(dt);
 	this->updateInput(dt);

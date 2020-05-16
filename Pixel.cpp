@@ -41,6 +41,11 @@ b2Fixture* Pixel::getFixture()
 	return this->bfix;
 }
 
+sf::Sprite Pixel::getSprite()
+{
+	return this->sprite;
+}
+
 float Pixel::getSize()
 {
 	return this->size;
